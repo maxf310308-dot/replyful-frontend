@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light only"/>
+  <title>Replyful — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0f1f3d; --navy-mid: #1a3260; --navy-light: #e8edf5;
+      --white: #ffffff; --off-white: #f8f9fc; --ink: #0f1f3d;
+      --muted: #6b7a99; --line: #dde2ee; --accent: #2563b0;
+      --accent-light: #dbeafe; --success: #16a34a; --success-light: #dcfce7;
+      --warning: #d97706; --warning-light: #fef3c7;
+      --danger: #dc2626; --danger-light: #fef2f2;
+    }
+    body { background: var(--off-white); color: var(--ink); font-family: 'Outfit', sans-serif; font-weight: 300; min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--navy); padding: 2rem; }
+    .login-box { background: white; border-radius: 12px; padding: 3rem; width: 100%; max-width: 420px; box-shadow: 0 30px 80px rgba(0,0,0,0.3); }
+    .login-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--navy); margin-bottom: 0.3rem; }
+    .login-logo span { color: var(--accent); }
+    .login-subtitle { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+    .login-label { font-size: 0.78rem; font-weight: 500; color: var(--navy); display: block; margin-bottom: 0.4rem; letter-spacing: 0.03em; }
+    .login-input { width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: 4px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: var(--ink); background: var(--off-white); outline: none; margin-bottom: 1rem; transition: border-color 0.2s; }
+    .login-input:focus { border-color: var(--accent); background: white; }
+    .login-btn { width: 100%; background: var(--navy); color: white; border: none; border-radius: 4px; padding: 0.9rem; font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
+    .login-btn:hover { background: var(--accent); }
+    .login-error { font-size: 0.82rem; color: #dc2626; margin-top: 0.8rem; display: none; }
+    .login-success { font-size: 0.82rem; color: var(--success); margin-top: 0.8rem; display: none; }
+    .forgot-link { font-size: 0.8rem; color: var(--accent); cursor: pointer; text-align: right; display: block; margin-top: -0.5rem; margin-bottom: 1rem; text-decoration: none; }
+    .forgot-link:hover { text-decoration: underline; }
+    .back-link { font-size: 0.8rem; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; margin-bottom: 1.5rem; }
+    .back-link:hover { color: var(--navy); }
+    .reset-step { display: none; }
+    .code-inputs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .code-input { flex: 1; padding: 0.9rem 0.5rem; border: 1px solid var(--line); border-radius: 4px; font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 500; color: var(--navy); background: var(--off-white); outline: none; text-align: center; transition: border-color 0.2s; }
+    .code-input:focus { border-color: var(--accent); background: white; }
+
+    /* ── DASHBOARD ── */
+    .dashboard { display: none; }
+    .dash-nav { background: var(--navy); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    .dash-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: white; }
+    .dash-logo span { color: #7eb8f0; }
+    .dash-nav-right { display: flex; align-items: center; gap: 1.5rem; }
+    .dash-settings-link { font-size: 0.83rem; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
+    .dash-settings-link:hover { color: white; }
+    .dash-user { font-size: 0.83rem; color: rgba(255,255,255,0.6); }
+    .dash-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.4rem 0.9rem; border-radius: 3px; font-family: 'Outfit', sans-serif; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
+    .dash-logout:hover { background: rgba(255,255,255,0.2); }
+
+    .dash-body { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .dash-greeting { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--navy); margin-bottom: 0.3rem; }
+    .dash-greeting em { font-style: italic; color: var(--accent); }
+    .dash-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.4rem; }
+    .dash-monitoring { font-size: 0.82rem; color: var(--muted); margin-bottom: 2rem; }
+    .dash-monitoring strong { color: var(--navy); }
+
+    /* ── TABS ── */
+    .tabs-bar { display: flex; gap: 0; border-bottom: 2px solid var(--line); margin-bottom: 2rem; }
+    .tab-btn {
+      background: none; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; padding: 0.75rem 1.4rem;
+      font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 400;
+      color: var(--muted); cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--navy); }
+    .tab-btn.active { color: var(--navy); font-weight: 500; border-bottom-color: var(--accent); }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ── PAUSE BANNER ── */
+    .pause-banner { background: var(--danger-light); border: 2px solid var(--danger); border-radius: 8px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .pause-banner-text { font-size: 0.9rem; color: var(--danger); font-weight: 500; }
+    .pause-banner-sub { font-size: 0.78rem; color: var(--danger); opacity: 0.8; margin-top: 0.2rem; }
+    .pause-card { background: white; border: 1px solid var(--line); border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .pause-card-info { flex: 1; }
+    .pause-card-title { font-weight: 500; font-size: 0.9rem; color: var(--navy); }
+    .pause-card-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+    .pause-card-actions { display: flex; gap: 0.75rem; align-items: center; }
+    .btn-pause { background: var(--danger-light); color: var(--danger); border: 1px solid var(--danger); border-radius: 4px; padding: 0.5rem 1.2rem; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-pause:hover { background: var(--danger); color: white; }
+    .btn-resume { background: var(--success-light); color: var(--success); border: 1px solid var(--success); border-radius: 4px; padding: 0.5rem 1.2rem; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-resume:hover { background: var(--success); color: white; }
+
+    /* ── PAUSE MODAL ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
+    .modal-box { background: white; border-radius: 12px; padding: 2rem; width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--navy); margin-bottom: 0.5rem; }
+    .modal-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .modal-label { font-size: 0.82rem; font-weight: 500; color: var(--navy); display: block; margin-bottom: 0.4rem; }
+    .modal-hint { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; display: block; }
+    .modal-textarea { width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--line); border-radius: 4px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: var(--navy); outline: none; resize: vertical; min-height: 80px; line-height: 1.5; }
+    .modal-textarea:focus { border-color: var(--accent); }
+    .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .modal-btn-confirm { background: var(--danger); color: white; border: none; border-radius: 4px; padding: 0.75rem 1.5rem; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s; flex: 1; }
+    .modal-btn-confirm:hover { opacity: 0.85; }
+    .modal-btn-cancel { background: none; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0.75rem 1.5rem; font-family: 'Outfit', sans-serif; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+    .modal-btn-cancel:hover { border-color: var(--navy); color: var(--navy); }
+
+    /* ── STATS ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border: 1px solid var(--line); border-radius: 8px; padding: 1.5rem; }
+    .stat-label { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+    .stat-number { font-family: 'Playfair Display', serif; font-size: 2.4rem; color: var(--navy); line-height: 1; margin-bottom: 0.2rem; }
+    .stat-detail { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── BOOKINGS ── */
+    .bookings-card { background: white; border: 2px solid var(--warning); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; }
+    .bookings-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; background: var(--warning-light); }
+    .bookings-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--navy); }
+    .bookings-badge { background: var(--warning); color: white; border-radius: 20px; padding: 0.2rem 0.7rem; font-size: 0.72rem; font-weight: 600; }
+    .booking-row { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--line); }
+    .booking-row:last-child { border-bottom: none; }
+    .booking-info { flex: 1; }
+    .booking-from { font-weight: 500; font-size: 0.9rem; color: var(--navy); }
+    .booking-email { font-size: 0.78rem; color: var(--muted); margin-top: 0.1rem; }
+    .booking-subject { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+    .booking-time { background: var(--warning-light); color: var(--warning); border-radius: 4px; padding: 0.25rem 0.7rem; font-size: 0.8rem; font-weight: 500; white-space: nowrap; }
+    .booking-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .btn-confirm { background: var(--success); color: white; border: none; border-radius: 4px; padding: 0.5rem 1rem; font-family: 'Outfit', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
+    .btn-confirm:hover { opacity: 0.85; }
+    .btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-decline { background: white; color: #dc2626; border: 1px solid #dc2626; border-radius: 4px; padding: 0.5rem 1rem; font-family: 'Outfit', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-decline:hover { background: #fef2f2; }
+    .btn-decline:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── DASH GRID ── */
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .dash-card { background: white; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .dash-card-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    .dash-card-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--navy); }
+    .dash-card-sub { font-size: 0.75rem; color: var(--muted); }
+    .dash-card-body { padding: 1.5rem; }
+
+    .category-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .category-item { display: flex; align-items: center; gap: 0.8rem; }
+    .category-name { font-size: 0.85rem; color: var(--ink); min-width: 140px; }
+    .category-bar-wrap { flex: 1; height: 6px; background: var(--navy-light); border-radius: 3px; overflow: hidden; }
+    .category-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.6s ease; }
+    .category-count { font-size: 0.82rem; font-weight: 500; color: var(--navy); min-width: 2rem; text-align: right; }
+
+    .email-table { width: 100%; border-collapse: collapse; }
+    .email-table th { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 0 0 0.8rem; border-bottom: 1px solid var(--line); }
+    .email-table td { font-size: 0.82rem; color: var(--ink); padding: 0.7rem 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    .email-table tr:last-child td { border-bottom: none; }
+    .email-from { font-weight: 400; color: var(--navy); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .email-subject { color: var(--muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .category-pill { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; font-weight: 500; background: var(--navy-light); color: var(--accent); white-space: nowrap; }
+    .email-time { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+
+    .chart-wrap { height: 140px; display: flex; align-items: flex-end; gap: 4px; }
+    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+    .chart-bar { width: 100%; background: var(--accent-light); border-radius: 3px 3px 0 0; transition: height 0.5s ease; min-height: 2px; }
+    .chart-bar:hover { background: var(--accent); }
+    .chart-date { font-size: 0.6rem; color: var(--muted); text-align: center; }
+
+    /* ── SUMMARIES TAB ── */
+    .summary-list { display: flex; flex-direction: column; gap: 0; }
+    .summary-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    .summary-item:last-child { border-bottom: none; }
+    .summary-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 0.35rem; }
+    .summary-body { flex: 1; min-width: 0; }
+    .summary-from { font-size: 0.82rem; font-weight: 500; color: var(--navy); margin-bottom: 0.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .summary-text { font-size: 0.85rem; color: var(--ink); line-height: 1.4; }
+    .summary-text.no-summary { color: var(--muted); font-style: italic; }
+    .summary-meta { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.3rem; flex-wrap: wrap; }
+    .summary-time { font-size: 0.72rem; color: var(--muted); }
+    .summary-pill { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.68rem; font-weight: 500; background: var(--navy-light); color: var(--accent); }
+
+    .cat-colors { Quote\ request: #16a765; }
+
+    /* ── LOADING ── */
+    .loading { display: flex; align-items: center; justify-content: center; padding: 3rem; color: var(--muted); font-size: 0.85rem; gap: 0.5rem; }
+    .spinner { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: 0.88rem; }
+    .empty-state-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .dash-grid { grid-template-columns: 1fr; }
+      .dash-body { padding: 1rem; }
+      .booking-row { flex-wrap: wrap; }
+      .tabs-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .tab-btn { font-size: 0.82rem; padding: 0.7rem 1rem; }
+    }
+    @media (max-width: 500px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .login-box { padding: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-page" id="loginPage">
+    <div class="login-box">
+      <div class="login-logo">Reply<span>ful</span></div>
+
+      <!-- Step 1: Normal login -->
+      <div id="loginStep">
+        <p class="login-subtitle">Sign in to your dashboard</p>
+        <label class="login-label">Email address</label>
+        <input class="login-input" type="email" id="loginEmail" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <label class="login-label">Password</label>
+        <input class="login-input" type="password" id="loginPassword" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <a class="forgot-link" onclick="showForgotStep()">Forgot your password?</a>
+        <button class="login-btn" onclick="doLogin()">Sign in</button>
+        <p class="login-error" id="loginError">Invalid email or password.</p>
+      </div>
+
+      <!-- Step 2: Forgot password — enter email -->
+      <div id="forgotStep" class="reset-step">
+        <p class="login-subtitle">Reset your password</p>
+        <a class="back-link" onclick="showLoginStep()">← Back to sign in</a>
+        <label class="login-label">Your account email</label>
+        <input class="login-input" type="email" id="forgotEmail" placeholder="you@example.com" onkeydown="if(event.key==='Enter')sendResetCode()"/>
+        <button class="login-btn" onclick="sendResetCode()">Send reset code</button>
+        <p class="login-error" id="forgotError"></p>
+        <p class="login-success" id="forgotSuccess"></p>
+      </div>
+
+      <!-- Step 3: Enter code -->
+      <div id="codeStep" class="reset-step">
+        <p class="login-subtitle">Enter your reset code</p>
+        <a class="back-link" onclick="showForgotStep()">← Back</a>
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:1.2rem;">We sent a 6-digit code to <strong id="codeEmailLabel" style="color:var(--navy)"></strong>. It expires in 30 minutes.</p>
+        <label class="login-label">Reset code</label>
+        <div class="code-inputs">
+          <input class="code-input" type="text" maxlength="1" id="c1" oninput="codeInput(this,'c2')" onkeydown="codeBack(event,this,null,'c1')"/>
+          <input class="code-input" type="text" maxlength="1" id="c2" oninput="codeInput(this,'c3')" onkeydown="codeBack(event,this,'c1','c2')"/>
+          <input class="code-input" type="text" maxlength="1" id="c3" oninput="codeInput(this,'c4')" onkeydown="codeBack(event,this,'c2','c3')"/>
+          <input class="code-input" type="text" maxlength="1" id="c4" oninput="codeInput(this,'c5')" onkeydown="codeBack(event,this,'c3','c4')"/>
+          <input class="code-input" type="text" maxlength="1" id="c5" oninput="codeInput(this,'c6')" onkeydown="codeBack(event,this,'c4','c5')"/>
+          <input class="code-input" type="text" maxlength="1" id="c6" oninput="codeInput(this,null)" onkeydown="codeBack(event,this,'c5','c6')"/>
+        </div>
+        <button class="login-btn" onclick="verifyCode()">Continue</button>
+        <p class="login-error" id="codeError"></p>
+      </div>
+
+      <!-- Step 4: New password -->
+      <div id="newPassStep" class="reset-step">
+        <p class="login-subtitle">Set a new password</p>
+        <label class="login-label">New password</label>
+        <input class="login-input" type="password" id="newPassword" placeholder="At least 8 characters" onkeydown="if(event.key==='Enter')setNewPassword()"/>
+        <label class="login-label">Confirm password</label>
+        <input class="login-input" type="password" id="confirmPassword" placeholder="Repeat your password" onkeydown="if(event.key==='Enter')setNewPassword()"/>
+        <button class="login-btn" onclick="setNewPassword()">Set new password</button>
+        <p class="login-error" id="newPassError"></p>
+        <p class="login-success" id="newPassSuccess"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAUSE MODAL -->
+  <div class="modal-overlay" id="pauseModal" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-title">Pause automation</div>
+      <p class="modal-sub">Replyful will stop auto-replying to emails. You can optionally set an away message that will be sent instead.</p>
+      <label class="modal-label">Away message <span style="font-weight:300;color:var(--muted)">(optional)</span></label>
+      <span class="modal-hint">If set, this will be sent automatically to anyone who emails you while paused.</span>
+      <textarea class="modal-textarea" id="awayMessageInput" placeholder="e.g. Thank you for your email. I'm currently away until 5th May and will be in touch when I return."></textarea>
+      <div class="modal-actions">
+        <button class="modal-btn-cancel" onclick="closePauseModal()">Cancel</button>
+        <button class="modal-btn-confirm" onclick="confirmPause()">⏸ Pause automation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard">
+    <nav class="dash-nav">
+      <div class="dash-logo">Reply<span>ful</span></div>
+      <div class="dash-nav-right">
+        <span class="dash-user" id="businessNameLabel"></span>
+        <a href="settings.html" class="dash-settings-link">⚙️ Settings</a>
+        <button class="dash-logout" onclick="logout()">Sign out</button>
+      </div>
+    </nav>
+
+    <div class="dash-body">
+      <h1 class="dash-greeting">Good to see you, <em id="greetingName">there</em>.</h1>
+      <p class="dash-sub">Here's what Replyful has been doing for your business.</p>
+      <p class="dash-monitoring">Monitoring inbox: <strong id="monitoringEmail">—</strong></p>
+
+      <div id="pauseControlArea"></div>
+
+      <!-- TABS -->
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('overview', this)">📊 Overview</button>
+        <button class="tab-btn" onclick="switchTab('whats-coming-in', this)">📬 What's coming in</button>
+        <button class="tab-btn" id="bookingsTabBtn" onclick="switchTab('bookings', this)">📅 Bookings & Quotes</button>
+      </div>
+
+      <!-- OVERVIEW TAB -->
+      <div class="tab-pane active" id="tab-overview">
+        <div id="overviewContent">
+          <div class="loading"><div class="spinner"></div> Loading your stats…</div>
+        </div>
+      </div>
+
+      <!-- WHAT'S COMING IN TAB -->
+      <div class="tab-pane" id="tab-whats-coming-in">
+        <div id="summariesContent">
+          <div class="loading"><div class="spinner"></div> Loading email summaries…</div>
+        </div>
+      </div>
+
+      <!-- BOOKINGS TAB -->
+      <div class="tab-pane" id="tab-bookings">
+        <div id="bookingsTabContent">
+          <div class="loading"><div class="spinner"></div> Loading bookings…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://replyful-backend-production.up.railway.app';
+    let sessionToken = null;
+    let isPaused = false;
+    let resetEmail = '';
+    let resetCode = '';
+    let dashboardData = null;
+
+    // ── Category dot colours ──────────────────────────────────
+    const CAT_COLORS = {
+      'Quote request': '#16a765',
+      'Booking request': '#4986e7',
+      'Complaint': '#dc2626',
+      'Follow-up': '#f6c026',
+      'Invoice query': '#9334e6',
+      'General enquiry': '#46d6db',
+      'Spam': '#b3b3b3',
+    };
+
+    window.onload = function() {
+      const token = localStorage.getItem('replyful_token');
+      if (token) { sessionToken = token; loadDashboard(token); }
+    };
+
+    // ── Tab switching ─────────────────────────────────────────
+    function switchTab(name, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + name).classList.add('active');
+
+      if (name === 'whats-coming-in' && dashboardData) renderSummaries();
+      if (name === 'bookings' && dashboardData) renderBookingsTab(dashboardData.bookings, dashboardData.pendingQuotes);
+    }
+
+    // ── Login flow ────────────────────────────────────────────
+    function showLoginStep() {
+      ['loginStep','forgotStep','codeStep','newPassStep'].forEach(id => {
+        document.getElementById(id).style.display = id === 'loginStep' ? 'block' : 'none';
+      });
+    }
+    function showForgotStep() {
+      ['loginStep','forgotStep','codeStep','newPassStep'].forEach(id => {
+        document.getElementById(id).style.display = id === 'forgotStep' ? 'block' : 'none';
+      });
+      document.getElementById('forgotError').style.display = 'none';
+      document.getElementById('forgotSuccess').style.display = 'none';
+    }
+
+    async function doLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+      if (!email || !password) { errEl.textContent = 'Please enter your email and password.'; errEl.style.display = 'block'; return; }
+      try {
+        const res = await fetch(`${API}/dashboard/login`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) { errEl.textContent = data.error || 'Invalid email or password.'; errEl.style.display = 'block'; return; }
+        sessionToken = data.token;
+        localStorage.setItem('replyful_token', data.token);
+        loadDashboard(data.token);
+      } catch (err) {
+        errEl.textContent = 'Connection error. Please try again.'; errEl.style.display = 'block';
+      }
+    }
+
+    async function sendResetCode() {
+      const email = document.getElementById('forgotEmail').value.trim();
+      const errEl = document.getElementById('forgotError');
+      const sucEl = document.getElementById('forgotSuccess');
+      errEl.style.display = 'none'; sucEl.style.display = 'none';
+      if (!email) { errEl.textContent = 'Please enter your email address.'; errEl.style.display = 'block'; return; }
+      try {
+        await fetch(`${API}/dashboard/forgot-password`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        resetEmail = email;
+        document.getElementById('codeEmailLabel').textContent = email;
+        ['loginStep','forgotStep','codeStep','newPassStep'].forEach(id => {
+          document.getElementById(id).style.display = id === 'codeStep' ? 'block' : 'none';
+        });
+        ['c1','c2','c3','c4','c5','c6'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('c1').focus();
+      } catch (err) {
+        errEl.textContent = 'Something went wrong. Please try again.'; errEl.style.display = 'block';
+      }
+    }
+
+    function codeInput(el, nextId) {
+      if (el.value && nextId) document.getElementById(nextId).focus();
+    }
+    function codeBack(e, el, prevId, selfId) {
+      if (e.key === 'Backspace' && !el.value && prevId) {
+        document.getElementById(prevId).focus();
+      }
+    }
+
+    async function verifyCode() {
+      const code = ['c1','c2','c3','c4','c5','c6'].map(id => document.getElementById(id).value).join('');
+      const errEl = document.getElementById('codeError');
+      errEl.style.display = 'none';
+      if (code.length < 6) { errEl.textContent = 'Please enter the full 6-digit code.'; errEl.style.display = 'block'; return; }
+      resetCode = code;
+      // Validate by trying the reset (we'll do the full reset on next step)
+      // Just move to next step — final validation happens on submit
+      ['loginStep','forgotStep','codeStep','newPassStep'].forEach(id => {
+        document.getElementById(id).style.display = id === 'newPassStep' ? 'block' : 'none';
+      });
+      document.getElementById('newPassword').focus();
+    }
+
+    async function setNewPassword() {
+      const newPass = document.getElementById('newPassword').value;
+      const confirmPass = document.getElementById('confirmPassword').value;
+      const errEl = document.getElementById('newPassError');
+      const sucEl = document.getElementById('newPassSuccess');
+      errEl.style.display = 'none'; sucEl.style.display = 'none';
+      if (newPass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display = 'block'; return; }
+      if (newPass !== confirmPass) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
+      try {
+        const res = await fetch(`${API}/dashboard/reset-password`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: resetEmail, code: resetCode, newPassword: newPass })
+        });
+        const data = await res.json();
+        if (!res.ok) { errEl.textContent = data.error || 'Invalid or expired code.'; errEl.style.display = 'block'; return; }
+        sucEl.textContent = '✓ Password updated! Signing you in…'; sucEl.style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('loginEmail').value = resetEmail;
+          document.getElementById('loginPassword').value = newPass;
+          showLoginStep();
+          doLogin();
+        }, 1500);
+      } catch (err) {
+        errEl.textContent = 'Something went wrong. Please try again.'; errEl.style.display = 'block';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('replyful_token');
+      sessionToken = null;
+      dashboardData = null;
+      document.getElementById('loginPage').style.display = 'flex';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
+      showLoginStep();
+    }
+
+    // ── Load dashboard ────────────────────────────────────────
+    async function loadDashboard(token) {
+      try {
+        const res = await fetch(`${API}/dashboard/stats`, { headers: { 'x-session-token': token } });
+        if (res.status === 401) { localStorage.removeItem('replyful_token'); return; }
+        const data = await res.json();
+        dashboardData = data;
+        isPaused = data.customer?.paused || false;
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('businessNameLabel').textContent = data.customer?.businessName || '';
+        document.getElementById('greetingName').textContent = data.customer?.businessName || 'there';
+        document.getElementById('monitoringEmail').textContent = data.customer?.email || '—';
+
+        // Update bookings tab badge
+        const pendingCount = (data.bookings || []).length + (data.pendingQuotes || []).length;
+        const bookingsTabBtn = document.getElementById('bookingsTabBtn');
+        if (pendingCount > 0) {
+          bookingsTabBtn.textContent = `📅 Bookings & Quotes (${pendingCount})`;
+        } else {
+          bookingsTabBtn.textContent = '📅 Bookings & Quotes';
+        }
+
+        document.getElementById('pauseControlArea').innerHTML = renderPauseControl(data.customer?.paused);
+        renderOverview(data);
+      } catch (err) { console.error(err); }
+    }
+
+    // ── Pause/resume ──────────────────────────────────────────
+    function openPauseModal() {
+      document.getElementById('pauseModal').style.display = 'flex';
+      document.getElementById('awayMessageInput').focus();
+    }
+    function closePauseModal() {
+      document.getElementById('pauseModal').style.display = 'none';
+    }
+    async function confirmPause() {
+      const awayMessage = document.getElementById('awayMessageInput').value.trim();
+      try {
+        const res = await fetch(`${API}/dashboard/pause`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken },
+          body: JSON.stringify({ awayMessage })
+        });
+        if (res.ok) { isPaused = true; closePauseModal(); loadDashboard(sessionToken); }
+      } catch (err) { alert('Something went wrong. Please try again.'); }
+    }
+    async function resumeAutomation() {
+      try {
+        const res = await fetch(`${API}/dashboard/resume`, {
+          method: 'POST', headers: { 'x-session-token': sessionToken }
+        });
+        if (res.ok) { isPaused = false; loadDashboard(sessionToken); }
+      } catch (err) { alert('Something went wrong. Please try again.'); }
+    }
+
+    // ── Helpers ───────────────────────────────────────────────
+    function timeAgo(dateStr) {
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const mins = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return `${mins}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      return `${days}d ago`;
+    }
+
+    // ── Booking actions ───────────────────────────────────────
+    async function confirmBooking(bookingId, btn) {
+      btn.disabled = true; btn.textContent = 'Confirming...';
+      const declineBtn = btn.nextElementSibling;
+      if (declineBtn) declineBtn.disabled = true;
+      try {
+        const res = await fetch(`${API}/dashboard/bookings/${bookingId}/confirm`, { method: 'POST', headers: { 'x-session-token': sessionToken } });
+        if (res.ok) {
+          const row = btn.closest('.booking-row');
+          row.innerHTML = `<div style="padding:0.2rem 0;color:var(--success);font-size:0.85rem;font-weight:500;">✅ Confirmed — confirmation email sent</div>`;
+          setTimeout(() => { row.remove(); updateBookingBadge(); }, 3000);
+        } else { btn.disabled = false; btn.textContent = 'Confirm'; alert('Something went wrong.'); }
+      } catch (err) { btn.disabled = false; btn.textContent = 'Confirm'; }
+    }
+
+    async function declineBooking(bookingId, btn) {
+      btn.disabled = true; btn.textContent = 'Declining...';
+      const confirmBtn = btn.previousElementSibling;
+      if (confirmBtn) confirmBtn.disabled = true;
+      try {
+        const res = await fetch(`${API}/dashboard/bookings/${bookingId}/decline`, { method: 'POST', headers: { 'x-session-token': sessionToken } });
+        if (res.ok) {
+          const row = btn.closest('.booking-row');
+          row.innerHTML = `<div style="padding:0.2rem 0;color:var(--muted);font-size:0.85rem;">↩️ Declined — alternative offered</div>`;
+          setTimeout(() => { row.remove(); updateBookingBadge(); }, 3000);
+        } else { btn.disabled = false; btn.textContent = 'Decline'; alert('Something went wrong.'); }
+      } catch (err) { btn.disabled = false; btn.textContent = 'Decline'; }
+    }
+
+    function updateBookingBadge() {
+      const bookingRows = document.querySelectorAll('#bookingsTabContent .booking-row[id^="booking"]').length;
+      const quoteRows = document.querySelectorAll('#bookingsTabContent .booking-row[id^="quote"]').length;
+      const total = bookingRows + quoteRows;
+      const btn = document.getElementById('bookingsTabBtn');
+      btn.textContent = total > 0 ? `📅 Bookings & Quotes (${total})` : '📅 Bookings & Quotes';
+    }
+
+    // ── Render helpers ────────────────────────────────────────
+    function renderPauseControl(paused) {
+      if (paused) {
+        return `<div class="pause-banner">
+          <div>
+            <div class="pause-banner-text">⏸ Automation is paused</div>
+            <div class="pause-banner-sub">Replyful is not auto-replying to emails right now.</div>
+          </div>
+          <button class="btn-resume" onclick="resumeAutomation()">▶ Resume automation</button>
+        </div>`;
+      }
+      return `<div class="pause-card">
+        <div class="pause-card-info">
+          <div class="pause-card-title">▶ Automation is active</div>
+          <div class="pause-card-sub">Replyful is replying to emails automatically.</div>
+        </div>
+        <div class="pause-card-actions">
+          <button class="btn-pause" onclick="openPauseModal()">⏸ Pause automation</button>
+        </div>
+      </div>`;
+    }
+
+    function renderOverview(data) {
+      const { total, breakdown, recent, daily, followUpStats } = data;
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayCount = daily.find(d => (typeof d.date === 'string' ? d.date.split('T')[0] : d.date) === todayStr)?.count || 0;
+      const topCategory = breakdown[0]?.category || '—';
+      const maxDaily = Math.max(...daily.map(d => parseInt(d.count)), 1);
+      const followUpSent = (followUpStats || []).find(s => s.status === 'sent')?.count || 0;
+      const followUpPending = (followUpStats || []).find(s => s.status === 'pending')?.count || 0;
+
+      document.getElementById('overviewContent').innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Total handled</div><div class="stat-number">${total}</div><div class="stat-detail">emails auto-replied</div></div>
+          <div class="stat-card"><div class="stat-label">Today</div><div class="stat-number">${todayCount}</div><div class="stat-detail">emails handled so far</div></div>
+          <div class="stat-card"><div class="stat-label">This month</div><div class="stat-number">${breakdown.reduce((a,b)=>a+parseInt(b.count),0)}</div><div class="stat-detail">in the last 30 days</div></div>
+          <div class="stat-card"><div class="stat-label">Follow-ups sent</div><div class="stat-number">${followUpSent}</div><div class="stat-detail">${followUpPending} pending</div></div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="dash-card">
+            <div class="dash-card-header"><div class="dash-card-title">Enquiry breakdown</div><div class="dash-card-sub">Last 30 days</div></div>
+            <div class="dash-card-body">
+              ${breakdown.length === 0 ? '<p style="color:var(--muted);font-size:0.85rem;">No emails processed yet.</p>' : `
+              <div class="category-list">
+                ${breakdown.map(b => {
+                  const tot = breakdown.reduce((a,x)=>a+parseInt(x.count),0);
+                  const pct = Math.round((b.count/tot)*100);
+                  return `<div class="category-item">
+                    <div class="category-name">${b.category}</div>
+                    <div class="category-bar-wrap"><div class="category-bar" style="width:${pct}%"></div></div>
+                    <div class="category-count">${b.count}</div>
+                  </div>`;
+                }).join('')}
+              </div>`}
+            </div>
+          </div>
+          <div class="dash-card">
+            <div class="dash-card-header"><div class="dash-card-title">Daily volume</div><div class="dash-card-sub">Last 14 days</div></div>
+            <div class="dash-card-body">
+              ${daily.length === 0 ? '<p style="color:var(--muted);font-size:0.85rem;">No data yet.</p>' : `
+              <div class="chart-wrap">
+                ${daily.map(d => {
+                  const h = Math.max(Math.round((parseInt(d.count)/maxDaily)*120),4);
+                  const label = new Date(d.date).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+                  return `<div class="chart-bar-wrap">
+                    <div class="chart-bar" style="height:${h}px" title="${d.count} on ${label}"></div>
+                    <div class="chart-date">${label.split(' ')[0]}</div>
+                  </div>`;
+                }).join('')}
+              </div>`}
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card" style="margin-bottom:1.5rem;">
+          <div class="dash-card-header">
+            <div class="dash-card-title">Follow-up sequences</div>
+            <div class="dash-card-sub">Auto-chase unanswered quote &amp; booking requests</div>
+          </div>
+          <div class="dash-card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.2rem;">
+              <div>
+                <div style="font-size:0.88rem;font-weight:500;color:var(--navy);">
+                  ${data.customer?.followupEnabled ? '▶ Follow-ups are active' : '⏸ Follow-ups are off'}
+                </div>
+                <div style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">
+                  ${data.customer?.followupEnabled
+                    ? `Sending one follow-up after ${data.customer?.followupDelayDays || 2} day${data.customer?.followupDelayDays === 1 ? '' : 's'} of no reply`
+                    : 'Enable to automatically chase unanswered quotes and bookings'}
+                </div>
+              </div>
+              <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;">
+                <div style="position:relative;width:42px;height:24px;" onclick="toggleFollowUps()">
+                  <div id="fuTrack" style="position:absolute;inset:0;border-radius:12px;background:${data.customer?.followupEnabled ? 'var(--success)' : 'var(--line)'};transition:background 0.2s;"></div>
+                  <div id="fuThumb" style="position:absolute;top:3px;left:${data.customer?.followupEnabled ? '21px' : '3px'};width:18px;height:18px;border-radius:50%;background:white;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+                </div>
+                <span style="font-size:0.82rem;color:var(--muted);" id="fuLabel">${data.customer?.followupEnabled ? 'On' : 'Off'}</span>
+              </label>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;" id="fuDelayRow" ${data.customer?.followupEnabled ? '' : 'style="display:none!important;"'}>
+              <label style="font-size:0.82rem;color:var(--navy);font-weight:500;white-space:nowrap;">Send after</label>
+              <input type="range" id="fuDelaySlider" min="1" max="7" value="${data.customer?.followupDelayDays || 2}"
+                style="flex:1;max-width:200px;accent-color:var(--accent);"
+                oninput="document.getElementById('fuDelayVal').textContent=this.value+' day'+(this.value==1?'':'s');saveFollowUpDelay(this.value)"/>
+              <span id="fuDelayVal" style="font-size:0.82rem;color:var(--accent);font-weight:500;min-width:50px;">${data.customer?.followupDelayDays || 2} days</span>
+              <span style="font-size:0.78rem;color:var(--muted);">of no reply</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card" style="margin-bottom:1.5rem;">
+          <div class="dash-card-header">
+            <div class="dash-card-title">Quote approval</div>
+            <div class="dash-card-sub">Review AI-drafted quotes before they send</div>
+          </div>
+          <div class="dash-card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+              <div>
+                <div style="font-size:0.88rem;font-weight:500;color:var(--navy);">
+                  ${data.customer?.quoteApprovalEnabled ? '▶ Quote approval is on' : '⏸ Quote approval is off'}
+                </div>
+                <div style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">
+                  ${data.customer?.quoteApprovalEnabled
+                    ? 'When a quote request arrives, Replyful sends the customer a holding reply straight away, then drafts a full quote for you to review here. You approve it, it sends. You dismiss it, nothing goes.'
+                    : 'Turn this on and Replyful will draft a full quote for every quote request, based on your pricing info. You review it in the dashboard before it goes to the customer — nothing sends without your say-so.'}
+                </div>
+                ${!data.customer?.pricing ? '<div style="font-size:0.75rem;color:var(--warning);margin-top:0.3rem;">⚠ No pricing info set — add pricing in Settings for quotes to be generated</div>' : ''}
+              </div>
+              <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;">
+                <div style="position:relative;width:42px;height:24px;" onclick="toggleQuoteApproval()">
+                  <div id="qaTrack" style="position:absolute;inset:0;border-radius:12px;background:${data.customer?.quoteApprovalEnabled ? 'var(--success)' : 'var(--line)'};transition:background 0.2s;"></div>
+                  <div id="qaThumb" style="position:absolute;top:3px;left:${data.customer?.quoteApprovalEnabled ? '21px' : '3px'};width:18px;height:18px;border-radius:50%;background:white;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+                </div>
+                <span style="font-size:0.82rem;color:var(--muted);" id="qaLabel">${data.customer?.quoteApprovalEnabled ? 'On' : 'Off'}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Recent emails handled</div><div class="dash-card-sub">Last 20</div></div>
+          <div class="dash-card-body" style="padding:0 1.5rem;">
+            ${recent.length === 0 ? '<p style="padding:1.5rem 0;color:var(--muted);font-size:0.85rem;">No emails processed yet.</p>' : `
+            <table class="email-table">
+              <thead><tr><th>From</th><th>Subject</th><th>Category</th><th>Replied</th></tr></thead>
+              <tbody>
+                ${recent.map(e => `<tr>
+                  <td><div class="email-from">${e.from_address}</div></td>
+                  <td><div class="email-subject">${e.subject || '(no subject)'}</div></td>
+                  <td><span class="category-pill">${e.category}</span></td>
+                  <td><span class="email-time">${timeAgo(e.replied_at)}</span></td>
+                </tr>`).join('')}
+              </tbody>
+            </table>`}
+          </div>
+        </div>`;
+    }
+
+    let fuSaveTimer = null;
+    async function toggleFollowUps() {
+      const track = document.getElementById('fuTrack');
+      const thumb = document.getElementById('fuThumb');
+      const label = document.getElementById('fuLabel');
+      const delayRow = document.getElementById('fuDelayRow');
+      if (!track) return;
+      const nowEnabled = thumb.style.left === '21px';
+      const newEnabled = !nowEnabled;
+      track.style.background = newEnabled ? 'var(--success)' : 'var(--line)';
+      thumb.style.left = newEnabled ? '21px' : '3px';
+      label.textContent = newEnabled ? 'On' : 'Off';
+      delayRow.style.display = newEnabled ? 'flex' : 'none';
+      try {
+        await fetch(`${API}/dashboard/followup-settings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken },
+          body: JSON.stringify({ followupEnabled: newEnabled })
+        });
+      } catch (err) { console.error('Toggle follow-ups error:', err); }
+    }
+
+    function saveFollowUpDelay(days) {
+      clearTimeout(fuSaveTimer);
+      fuSaveTimer = setTimeout(async () => {
+        try {
+          await fetch(`${API}/dashboard/followup-settings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken },
+            body: JSON.stringify({ followupDelayDays: parseInt(days) })
+          });
+        } catch (err) { console.error('Save follow-up delay error:', err); }
+      }, 600);
+    }
+
+    async function renderSummaries() {
+      const container = document.getElementById('summariesContent');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div> Loading summaries…</div>';
+      try {
+        const res = await fetch(`${API}/dashboard/summaries`, { headers: { 'x-session-token': sessionToken } });
+        const data = await res.json();
+        const emails = data.emails || [];
+
+        if (emails.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📬</div>No emails processed yet.<br/>Once emails start coming in, you'll see summaries here.</div>`;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">What people are asking about</div>
+              <div class="dash-card-sub">Last 30 emails · AI summaries</div>
+            </div>
+            <div class="dash-card-body" style="padding: 0 1.5rem;">
+              <div class="summary-list">
+                ${emails.map(e => {
+                  const color = CAT_COLORS[e.category] || '#b3b3b3';
+                  const from = e.from_address || '—';
+                  const shortFrom = from.includes('<') ? from.match(/<(.+?)>/)?.[1] || from : from;
+                  return `<div class="summary-item">
+                    <div class="summary-cat-dot" style="background:${color}"></div>
+                    <div class="summary-body">
+                      <div class="summary-from">${shortFrom}</div>
+                      <div class="summary-text${e.summary ? '' : ' no-summary'}">${e.summary || 'Summary not available for this email'}</div>
+                      <div class="summary-meta">
+                        <span class="summary-pill">${e.category || '—'}</span>
+                        <span class="summary-time">${timeAgo(e.replied_at)}</span>
+                      </div>
+                    </div>
+                  </div>`;
+                }).join('')}
+              </div>
+            </div>
+          </div>`;
+      } catch (err) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div>Couldn't load summaries. Please try again.</div>`;
+      }
+    }
+
+    async function toggleQuoteApproval() {
+      const track = document.getElementById('qaTrack');
+      const thumb = document.getElementById('qaThumb');
+      const label = document.getElementById('qaLabel');
+      if (!track) return;
+      const nowEnabled = thumb.style.left === '21px';
+      const newEnabled = !nowEnabled;
+      track.style.background = newEnabled ? 'var(--success)' : 'var(--line)';
+      thumb.style.left = newEnabled ? '21px' : '3px';
+      label.textContent = newEnabled ? 'On' : 'Off';
+      try {
+        await fetch(`${API}/dashboard/quote-settings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken },
+          body: JSON.stringify({ quoteApprovalEnabled: newEnabled })
+        });
+      } catch (err) { console.error('Toggle quote approval error:', err); }
+    }
+
+    async function approveQuote(quoteId, btn) {
+      btn.disabled = true; btn.textContent = 'Sending...';
+      const declineBtn = btn.nextElementSibling;
+      if (declineBtn) declineBtn.disabled = true;
+      try {
+        const res = await fetch(`${API}/dashboard/quotes/${quoteId}/approve`, { method: 'POST', headers: { 'x-session-token': sessionToken } });
+        if (res.ok) {
+          const row = btn.closest('.booking-row');
+          row.innerHTML = `<div style="padding:0.2rem 0;color:var(--success);font-size:0.85rem;font-weight:500;">✅ Quote sent to customer</div>`;
+          setTimeout(() => { row.remove(); updateBookingBadge(); }, 3000);
+        } else { btn.disabled = false; btn.textContent = 'Send quote'; alert('Something went wrong.'); }
+      } catch (err) { btn.disabled = false; btn.textContent = 'Send quote'; }
+    }
+
+    async function declineQuote(quoteId, btn) {
+      btn.disabled = true; btn.textContent = 'Dismissing...';
+      const approveBtn = btn.previousElementSibling;
+      if (approveBtn) approveBtn.disabled = true;
+      try {
+        const res = await fetch(`${API}/dashboard/quotes/${quoteId}/decline`, { method: 'POST', headers: { 'x-session-token': sessionToken } });
+        if (res.ok) {
+          const row = btn.closest('.booking-row');
+          row.innerHTML = `<div style="padding:0.2rem 0;color:var(--muted);font-size:0.85rem;">↩️ Quote dismissed</div>`;
+          setTimeout(() => { row.remove(); updateBookingBadge(); }, 3000);
+        } else { btn.disabled = false; btn.textContent = 'Dismiss'; alert('Something went wrong.'); }
+      } catch (err) { btn.disabled = false; btn.textContent = 'Dismiss'; }
+    }
+
+    function renderBookingsTab(bookings, pendingQuotes) {
+      const container = document.getElementById('bookingsTabContent');
+      const hasBookings = bookings && bookings.length > 0;
+      const hasQuotes = pendingQuotes && pendingQuotes.length > 0;
+
+      if (!hasBookings && !hasQuotes) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📅</div>No pending bookings or quotes right now.<br/>They'll appear here when customers request times or quote approvals are ready.</div>`;
+        return;
+      }
+
+      let html = '';
+
+      if (hasQuotes) {
+        const quoteRows = pendingQuotes.map(q => `
+          <div class="booking-row" id="quote-${q.id}">
+            <div class="booking-info">
+              <div class="booking-from" style="display:flex;align-items:center;gap:0.5rem;">
+                <span style="background:var(--accent-light);color:var(--accent);font-size:0.65rem;font-weight:600;padding:0.15rem 0.5rem;border-radius:20px;letter-spacing:0.05em;">QUOTE</span>
+                ${q.from_name || q.from_email}
+              </div>
+              <div class="booking-email">${q.from_email}</div>
+              <div class="booking-subject">${q.subject || ''}</div>
+              <details style="margin-top:0.5rem;">
+                <summary style="font-size:0.75rem;color:var(--accent);cursor:pointer;user-select:none;">Preview draft quote</summary>
+                <div style="margin-top:0.5rem;padding:0.75rem;background:var(--off-white);border-radius:4px;font-size:0.78rem;color:var(--ink);line-height:1.6;white-space:pre-wrap;max-height:200px;overflow-y:auto;">${q.quote_text}</div>
+              </details>
+            </div>
+            <div class="booking-actions">
+              <button class="btn-confirm" onclick="approveQuote(${q.id}, this)">✓ Send quote</button>
+              <button class="btn-decline" onclick="declineQuote(${q.id}, this)">✗ Dismiss</button>
+            </div>
+          </div>`).join('');
+
+        html += `
+          <div class="bookings-card" style="border-color:var(--accent);margin-bottom:1.5rem;">
+            <div class="bookings-header" style="background:var(--accent-light);">
+              <div class="bookings-title">💬 Pending quotes</div>
+              <div class="bookings-badge" style="background:var(--accent);">${pendingQuotes.length} awaiting approval</div>
+            </div>
+            <div>${quoteRows}</div>
+          </div>`;
+      }
+
+      if (hasBookings) {
+        const bookingRows = bookings.map(b => `
+          <div class="booking-row" id="booking-tab-${b.id}">
+            <div class="booking-info">
+              <div class="booking-from">${b.from_name || b.from_email}</div>
+              <div class="booking-email">${b.from_email}</div>
+              <div class="booking-subject">${b.subject || ''}</div>
+            </div>
+            <div class="booking-time">📅 ${b.proposed_time}</div>
+            <div class="booking-actions">
+              <button class="btn-confirm" onclick="confirmBooking(${b.id}, this)">✓ Confirm</button>
+              <button class="btn-decline" onclick="declineBooking(${b.id}, this)">✗ Decline</button>
+            </div>
+          </div>`).join('');
+
+        html += `
+          <div class="bookings-card">
+            <div class="bookings-header">
+              <div class="bookings-title">📅 Pending booking requests</div>
+              <div class="bookings-badge">${bookings.length} awaiting confirmation</div>
+            </div>
+            <div>${bookingRows}</div>
+          </div>`;
+      }
+
+      html += `<p style="font-size:0.78rem;color:var(--muted);margin-top:1rem;">Approving a quote sends it directly to the customer. Confirming a booking sends a confirmation email.</p>`;
+      container.innerHTML = html;
+    }
+  </script>
+</body>
+</html>

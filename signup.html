@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get started — Replyful</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0f1f3d; --accent: #2563b0; --muted: #6b7a99;
+      --line: #dde2ee; --off-white: #f8f9fc; --white: #fff;
+    }
+    body { font-family: 'Outfit', sans-serif; font-weight: 300; background: var(--off-white); color: var(--navy); min-height: 100vh; }
+
+    nav {
+      background: var(--navy); padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: white; text-decoration: none; }
+    .nav-logo span { color: #7eb8f0; }
+    .nav-back { font-size: 0.82rem; color: rgba(255,255,255,0.6); text-decoration: none; }
+    .nav-back:hover { color: white; }
+
+    .page { max-width: 680px; margin: 0 auto; padding: 3rem 2rem; }
+
+    .page-tag {
+      display: inline-block; background: #dbeafe; color: var(--accent);
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.3rem 0.8rem; border-radius: 20px; margin-bottom: 1rem;
+    }
+
+    h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; line-height: 1.2; margin-bottom: 0.8rem; }
+    h1 em { font-style: italic; color: var(--accent); }
+
+    .page-sub { font-size: 1rem; color: var(--muted); margin-bottom: 2.5rem; line-height: 1.6; }
+
+    .steps-bar {
+      display: flex; gap: 0; margin-bottom: 2.5rem;
+      border-radius: 4px; overflow: hidden; border: 1px solid var(--line);
+    }
+    .step-tab {
+      flex: 1; padding: 0.7rem; text-align: center; font-size: 0.75rem;
+      font-weight: 500; color: var(--muted); background: white; border-right: 1px solid var(--line);
+      transition: all 0.2s;
+    }
+    .step-tab:last-child { border-right: none; }
+    .step-tab.active { background: var(--navy); color: white; }
+    .step-tab.done { background: #dcfce7; color: #16a34a; }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label {
+      display: block; font-size: 0.82rem; font-weight: 500;
+      color: var(--navy); margin-bottom: 0.4rem; letter-spacing: 0.02em;
+    }
+    .form-hint { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; display: block; }
+    .form-input, .form-textarea, .form-select {
+      width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--line);
+      border-radius: 4px; font-family: 'Outfit', sans-serif; font-size: 0.9rem;
+      color: var(--navy); background: white; outline: none; transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--accent); }
+    .form-textarea { min-height: 100px; resize: vertical; line-height: 1.5; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .provider-note {
+      background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;
+      padding: 0.75rem 1rem; font-size: 0.78rem; color: var(--accent);
+      margin-top: 0.5rem; line-height: 1.5;
+    }
+    .provider-note strong { color: var(--navy); }
+
+    .tone-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem; }
+    .tone-card {
+      border: 2px solid var(--line); border-radius: 8px; padding: 1rem;
+      cursor: pointer; transition: all 0.2s; background: white; text-align: center;
+    }
+    .tone-card:hover { border-color: var(--accent); }
+    .tone-card.selected { border-color: var(--accent); background: #eff6ff; }
+    .tone-name { font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 0.3rem; }
+    .tone-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
+
+    .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem; }
+    .plan-card {
+      border: 2px solid var(--line); border-radius: 8px; padding: 1.5rem;
+      cursor: pointer; transition: all 0.2s; background: white;
+    }
+    .plan-card:hover { border-color: var(--accent); }
+    .plan-card.selected { border-color: var(--accent); background: #eff6ff; }
+    .plan-name { font-weight: 600; font-size: 1rem; color: var(--navy); margin-bottom: 0.3rem; }
+    .plan-price { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--navy); margin-bottom: 0.5rem; }
+    .plan-price span { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 300; color: var(--muted); }
+    .plan-feature { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+
+    .btn-row { display: flex; gap: 1rem; margin-top: 2rem; }
+    .btn-next {
+      background: var(--navy); color: white; border: none; border-radius: 4px;
+      padding: 0.9rem 2rem; font-family: 'Outfit', sans-serif; font-size: 0.95rem;
+      font-weight: 500; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-next:hover { background: var(--accent); }
+    .btn-next:disabled { background: var(--muted); cursor: not-allowed; }
+    .btn-back {
+      background: none; color: var(--muted); border: 1px solid var(--line);
+      border-radius: 4px; padding: 0.9rem 1.5rem; font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+
+    .success-box {
+      text-align: center; padding: 3rem 2rem; background: white;
+      border: 1px solid var(--line); border-radius: 8px;
+    }
+    .success-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .success-box h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.8rem; }
+    .success-box p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; max-width: 440px; margin: 0 auto 0.5rem; }
+
+    .cancelled-box {
+      text-align: center; padding: 3rem 2rem; background: white;
+      border: 1px solid var(--line); border-radius: 8px;
+    }
+    .cancelled-box h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.8rem; }
+    .cancelled-box p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; max-width: 440px; margin: 0 auto 0.5rem; }
+
+    .form-error { font-size: 0.8rem; color: #dc2626; margin-top: 0.4rem; display: none; }
+
+    .section-divider { border: none; border-top: 1px solid var(--line); margin: 2rem 0; }
+
+    @media (max-width: 600px) {
+      .form-row, .plan-grid { grid-template-columns: 1fr; }
+      .tone-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Reply<span>ful</span></a>
+  <a href="/" class="nav-back">← Back to home</a>
+</nav>
+
+<div class="page">
+  <div class="page-tag">Get started</div>
+  <h1>Set up your<br/><em>automated inbox.</em></h1>
+  <p class="page-sub">Fill in a few details about your business and we'll have Replyful set up and replying to your emails within 24 hours.</p>
+
+  <div class="steps-bar" id="stepsBar">
+    <div class="step-tab active" id="tab1">1. Your business</div>
+    <div class="step-tab" id="tab2">2. Your emails</div>
+    <div class="step-tab" id="tab3">3. Your style</div>
+    <div class="step-tab" id="tab4">4. Choose a plan</div>
+    <div class="step-tab" id="tab5">5. Done</div>
+  </div>
+
+  <!-- STEP 1 — Business details -->
+  <div class="form-section active" id="step1">
+    <div class="form-group">
+      <label class="form-label">Your full name</label>
+      <input class="form-input" id="ownerName" placeholder="e.g. James Wilson" type="text"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Business name</label>
+      <input class="form-input" id="businessName" placeholder="e.g. Wilson Plumbing & Heating" type="text"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Business type</label>
+      <select class="form-select" id="businessType">
+        <option value="">Select your business type</option>
+        <option value="plumber">Plumber / Heating engineer</option>
+        <option value="electrician">Electrician</option>
+        <option value="builder">Builder / Contractor</option>
+        <option value="consultant">Consultant</option>
+        <option value="landscaper">Landscaper / Gardener</option>
+        <option value="cleaner">Cleaning business</option>
+        <option value="clinic">Clinic / Therapist</option>
+        <option value="accountant">Accountant / Bookkeeper</option>
+        <option value="solicitor">Solicitor / Legal</option>
+        <option value="other">Other small business</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your Gmail or Google Workspace email address</label>
+      <span class="form-hint">This is the inbox Replyful will monitor and reply from.</span>
+      <input class="form-input" id="gmailAddress" placeholder="you@gmail.com or you@yourbusiness.co.uk" type="email"/>
+      <div class="provider-note">
+        <strong>Works with Gmail and Google Workspace.</strong> If your business email (e.g. info@smithplumbing.co.uk) is hosted through Google, it works here. Not sure? If you access your email via Gmail.com or the Gmail app, you're good. <strong>Outlook / Microsoft 365 support coming soon.</strong>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Working hours</label>
+      <input class="form-input" id="workingHours" placeholder="e.g. Monday to Friday, 8am to 6pm" type="text"/>
+    </div>
+    <p class="form-error" id="err1">Please fill in all fields.</p>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goTo(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 — Services & pricing -->
+  <div class="form-section" id="step2">
+    <div class="form-group">
+      <label class="form-label">Your services</label>
+      <span class="form-hint">List each service on a new line. Be specific — this helps Replyful give accurate answers.</span>
+      <textarea class="form-textarea" id="services" placeholder="e.g.&#10;Boiler installation&#10;Boiler repair and servicing&#10;Landlord gas safety certificates&#10;Central heating installation&#10;Emergency callouts"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your pricing <span style="font-weight:300;color:var(--muted)">(optional but recommended)</span></label>
+      <span class="form-hint">Share as much or as little as you're comfortable with. Even rough ranges help.</span>
+      <textarea class="form-textarea" id="pricing" placeholder="e.g.&#10;Boiler installation from £1,800&#10;Hourly rate £65&#10;Emergency callout £95 + parts&#10;Free no-obligation survey"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Common questions & answers <span style="font-weight:300;color:var(--muted)">(optional)</span></label>
+      <span class="form-hint">What do customers ask most often? Format: Q: question / A: answer</span>
+      <textarea class="form-textarea" id="faqs" placeholder="e.g.&#10;Q: Do you offer free quotes?&#10;A: Yes, we offer a free no-obligation survey.&#10;&#10;Q: How quickly can you come out?&#10;A: Usually within 3-5 working days for non-emergency work.&#10;&#10;Q: What areas do you cover?&#10;A: We cover a 20-mile radius of Birmingham."></textarea>
+    </div>
+    <p class="form-error" id="err2">Please fill in your services.</p>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goTo(1)">← Back</button>
+      <button class="btn-next" onclick="goTo(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — Reply style -->
+  <div class="form-section" id="step3">
+    <div class="form-group">
+      <label class="form-label">How should Replyful sound?</label>
+      <span class="form-hint">Choose the tone that best matches how you normally communicate with customers.</span>
+      <div class="tone-grid">
+        <div class="tone-card" id="toneFriendly" onclick="selectTone('friendly')">
+          <div class="tone-name">😊 Friendly</div>
+          <div class="tone-desc">Warm and approachable. Like a helpful neighbour who's also an expert.</div>
+        </div>
+        <div class="tone-card selected" id="toneProfessional" onclick="selectTone('professional')">
+          <div class="tone-name">👔 Professional</div>
+          <div class="tone-desc">Confident and clear. Polite without being stiff. Works for most businesses.</div>
+        </div>
+        <div class="tone-card" id="toneFormal" onclick="selectTone('formal')">
+          <div class="tone-name">🎩 Formal</div>
+          <div class="tone-desc">Precise and businesslike. Best for legal, financial or clinical services.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Sign-off name</label>
+      <span class="form-hint">How should Replyful sign off your emails? e.g. "James", "James Wilson", "Wilson Plumbing"</span>
+      <input class="form-input" id="signOffName" placeholder="e.g. James Wilson Plumbing"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Anything Replyful should never mention? <span style="font-weight:300;color:var(--muted)">(optional)</span></label>
+      <span class="form-hint">e.g. "Don't mention pricing until the customer asks" or "Never discuss weekend availability"</span>
+      <textarea class="form-textarea" id="neverMention" style="min-height:70px;" placeholder="e.g. Don't mention pricing until the customer specifically asks for it."></textarea>
+    </div>
+
+    <p class="form-error" id="err3">Please fill in your sign-off name.</p>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goTo(2)">← Back</button>
+      <button class="btn-next" onclick="goTo(4)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 — Plan selection -->
+  <div class="form-section" id="step4">
+    <div class="form-group">
+      <label class="form-label">Choose your plan</label>
+      <div class="plan-grid">
+        <div class="plan-card selected" id="planStarter" onclick="selectPlan('starter')">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">£47<span>/mo</span></div>
+          <div class="plan-feature">Up to 500 auto-replies per month · 4-second response time · Dashboard access · Weekly reports</div>
+        </div>
+        <div class="plan-card" id="planPro" onclick="selectPlan('pro')">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">£97<span>/mo</span></div>
+          <div class="plan-feature">Unlimited auto-replies · Instant response · Dashboard access · Weekly reports · Priority support</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:1.5rem;">
+      <label class="form-label">Your email address <span style="font-weight:300;color:var(--muted)">(for your dashboard login)</span></label>
+      <input class="form-input" id="loginEmail" placeholder="you@email.com" type="email"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Create a password</label>
+        <input class="form-input" id="loginPassword" type="password" placeholder="At least 8 characters"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm password</label>
+        <input class="form-input" id="loginPassword2" type="password" placeholder="Repeat your password"/>
+      </div>
+    </div>
+    <p class="form-error" id="err4">Please fill in all fields.</p>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goTo(3)">← Back</button>
+      <button class="btn-next" id="submitBtn" onclick="submitForm()">Continue to payment →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 — Success/cancelled -->
+  <div class="form-section" id="step5">
+    <div class="success-box" id="successBox" style="display:none;">
+      <div class="success-icon">✅</div>
+      <h2>You're all set!</h2>
+      <p>Payment confirmed. Welcome to Replyful!</p>
+      <p>We've sent a welcome email with your dashboard login and a link to connect your Gmail or Google Workspace account. Check your inbox — it should arrive within a couple of minutes.</p>
+      <p style="margin-top:1.5rem;font-size:0.82rem;">Any questions? Email us at <a href="mailto:team@replyful.co.uk" style="color:var(--accent);">team@replyful.co.uk</a></p>
+    </div>
+    <div class="cancelled-box" id="cancelledBox" style="display:none;">
+      <div class="success-icon">↩️</div>
+      <h2>No problem</h2>
+      <p>Your details have been saved. Whenever you're ready to complete your subscription, just come back and start from where you left off.</p>
+      <p style="margin-top:1rem;"><a href="/" style="color:var(--accent);font-size:0.9rem;">← Back to Replyful</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedPlan = 'starter';
+  let selectedTone = 'professional';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      document.getElementById('stepsBar').style.display = 'none';
+      document.querySelector('.page-tag').style.display = 'none';
+      document.querySelector('h1').style.display = 'none';
+      document.querySelector('.page-sub').style.display = 'none';
+      for (let i = 1; i <= 4; i++) document.getElementById(`step${i}`).classList.remove('active');
+      document.getElementById('step5').classList.add('active');
+      document.getElementById('successBox').style.display = 'block';
+    }
+    if (params.get('cancelled') === 'true') {
+      document.getElementById('stepsBar').style.display = 'none';
+      document.querySelector('.page-tag').style.display = 'none';
+      document.querySelector('h1').style.display = 'none';
+      document.querySelector('.page-sub').style.display = 'none';
+      for (let i = 1; i <= 4; i++) document.getElementById(`step${i}`).classList.remove('active');
+      document.getElementById('step5').classList.add('active');
+      document.getElementById('cancelledBox').style.display = 'block';
+    }
+  });
+
+  function selectPlan(plan) {
+    selectedPlan = plan;
+    document.getElementById('planStarter').classList.toggle('selected', plan === 'starter');
+    document.getElementById('planPro').classList.toggle('selected', plan === 'pro');
+  }
+
+  function selectTone(tone) {
+    selectedTone = tone;
+    document.getElementById('toneFriendly').classList.toggle('selected', tone === 'friendly');
+    document.getElementById('toneProfessional').classList.toggle('selected', tone === 'professional');
+    document.getElementById('toneFormal').classList.toggle('selected', tone === 'formal');
+  }
+
+  function goTo(step) {
+    if (step === 2) {
+      const err = document.getElementById('err1');
+      if (!document.getElementById('ownerName').value.trim() ||
+          !document.getElementById('businessName').value.trim() ||
+          !document.getElementById('businessType').value ||
+          !document.getElementById('gmailAddress').value.trim() ||
+          !document.getElementById('workingHours').value.trim()) {
+        err.style.display = 'block'; return;
+      }
+      err.style.display = 'none';
+    }
+    if (step === 3) {
+      const err = document.getElementById('err2');
+      if (!document.getElementById('services').value.trim()) {
+        err.style.display = 'block'; return;
+      }
+      err.style.display = 'none';
+    }
+    if (step === 4) {
+      const err = document.getElementById('err3');
+      if (!document.getElementById('signOffName').value.trim()) {
+        err.style.display = 'block'; return;
+      }
+      err.style.display = 'none';
+    }
+
+    const totalSteps = 5;
+    for (let i = 1; i <= totalSteps; i++) {
+      document.getElementById(`step${i}`).classList.toggle('active', i === step);
+      const tab = document.getElementById(`tab${i}`);
+      if (!tab) continue;
+      tab.classList.remove('active', 'done');
+      if (i === step) tab.classList.add('active');
+      else if (i < step) tab.classList.add('done');
+    }
+  }
+
+  async function submitForm() {
+    const loginEmail = document.getElementById('loginEmail').value.trim();
+    const loginPassword = document.getElementById('loginPassword').value;
+    const loginPassword2 = document.getElementById('loginPassword2').value;
+    const err = document.getElementById('err4');
+    const btn = document.getElementById('submitBtn');
+
+    if (!loginEmail || !loginPassword || !loginPassword2) { err.textContent = 'Please fill in all fields.'; err.style.display = 'block'; return; }
+    if (loginPassword !== loginPassword2) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; return; }
+    if (loginPassword.length < 8) { err.textContent = 'Password must be at least 8 characters.'; err.style.display = 'block'; return; }
+    err.style.display = 'none';
+
+    btn.disabled = true;
+    btn.textContent = 'Saving your details...';
+
+    const businessName = document.getElementById('businessName').value.trim();
+    const customerId = 'cust_' + businessName.toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 20) + '_' + Date.now().toString().slice(-4);
+
+    const payload = {
+      id: customerId,
+      businessName: businessName,
+      businessType: document.getElementById('businessType').value,
+      businessDescription: `${businessName} - ${document.getElementById('businessType').value}`,
+      email: document.getElementById('gmailAddress').value.trim(),
+      plan: selectedPlan,
+      replyDelaySeconds: selectedPlan === 'pro' ? 0 : 4,
+      services: document.getElementById('services').value.trim(),
+      pricing: document.getElementById('pricing').value.trim(),
+      faqs: document.getElementById('faqs').value.trim(),
+      workingHours: document.getElementById('workingHours').value.trim(),
+      replyTone: selectedTone,
+      signOffName: document.getElementById('signOffName').value.trim(),
+      neverMention: document.getElementById('neverMention').value.trim(),
+      active: false,
+      loginEmail: loginEmail,
+      loginPassword: loginPassword
+    };
+
+    try {
+      await fetch('https://replyful-backend-production.up.railway.app/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      btn.textContent = 'Redirecting to payment...';
+      const checkoutRes = await fetch('https://replyful-backend-production.up.railway.app/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId, plan: selectedPlan, loginEmail })
+      });
+
+      const { url } = await checkoutRes.json();
+      window.location.href = url;
+
+    } catch(e) {
+      console.error(e);
+      btn.disabled = false;
+      btn.textContent = 'Continue to payment →';
+      err.textContent = 'Something went wrong. Please try again.';
+      err.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>

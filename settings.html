@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings — Replyful</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0f1f3d; --accent: #2563b0; --muted: #6b7a99;
+      --line: #dde2ee; --off-white: #f8f9fc; --white: #fff;
+      --success: #16a34a; --success-light: #dcfce7;
+      --danger: #dc2626; --danger-light: #fef2f2;
+      --warning: #d97706; --warning-light: #fef3c7;
+      --navy-light: #e8edf5;
+    }
+    body { font-family: 'Outfit', sans-serif; font-weight: 300; background: var(--off-white); color: var(--navy); min-height: 100vh; }
+    nav { background: var(--navy); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: white; text-decoration: none; }
+    .nav-logo span { color: #7eb8f0; }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-link { font-size: 0.83rem; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
+    .nav-link:hover { color: white; }
+    .nav-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.4rem 0.9rem; border-radius: 3px; font-family: 'Outfit', sans-serif; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
+    .nav-logout:hover { background: rgba(255,255,255,0.2); }
+    .page { max-width: 720px; margin: 0 auto; padding: 3rem 2rem; }
+    .page-header { margin-bottom: 2.5rem; }
+    .page-tag { display: inline-block; background: #dbeafe; color: var(--accent); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.8rem; border-radius: 20px; margin-bottom: 0.8rem; }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 0.4rem; }
+    .page-title em { font-style: italic; color: var(--accent); }
+    .page-sub { font-size: 0.9rem; color: var(--muted); }
+    .account-box { background: white; border: 1px solid var(--line); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: flex-start; gap: 1.5rem; }
+    .account-icon { width: 48px; height: 48px; background: var(--navy); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .account-details { flex: 1; }
+    .account-name { font-weight: 600; font-size: 1rem; color: var(--navy); }
+    .account-email { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
+    .account-plan { display: inline-block; background: var(--navy); color: white; font-size: 0.72rem; font-weight: 500; padding: 0.2rem 0.7rem; border-radius: 20px; margin-top: 0.4rem; }
+    .reconnect-btn { background: none; border: 1px solid var(--line); border-radius: 4px; padding: 0.4rem 0.9rem; font-family: 'Outfit', sans-serif; font-size: 0.78rem; color: var(--muted); cursor: pointer; transition: border-color 0.2s, color 0.2s; margin-top: 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .reconnect-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .reconnect-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .settings-section { background: white; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; }
+    .section-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--navy); }
+    .section-sub { font-size: 0.75rem; color: var(--muted); }
+    .section-body { padding: 1.5rem; }
+    .form-group { margin-bottom: 1.4rem; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--navy); margin-bottom: 0.4rem; }
+    .form-hint { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; display: block; }
+    .form-input, .form-textarea { width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--line); border-radius: 4px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: var(--navy); background: white; outline: none; transition: border-color 0.2s; }
+    .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
+    .tone-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem; }
+    .tone-card { border: 2px solid var(--line); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s; background: white; text-align: center; }
+    .tone-card:hover { border-color: var(--accent); }
+    .tone-card.selected { border-color: var(--accent); background: #eff6ff; }
+    .tone-name { font-weight: 600; font-size: 0.88rem; color: var(--navy); margin-bottom: 0.25rem; }
+    .tone-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+    .timing-presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
+    .timing-preset { border: 2px solid var(--line); border-radius: 6px; padding: 0.7rem 0.5rem; cursor: pointer; transition: all 0.2s; background: white; text-align: center; }
+    .timing-preset:hover:not(.pro-only) { border-color: var(--accent); }
+    .timing-preset.selected { border-color: var(--accent); background: #eff6ff; }
+    .timing-preset.pro-only { opacity: 0.4; cursor: not-allowed; }
+    .timing-preset-name { font-size: 0.8rem; font-weight: 500; color: var(--navy); }
+    .timing-preset-range { font-size: 0.65rem; color: var(--muted); margin-top: 0.2rem; line-height: 1.3; }
+    .timing-pro-badge { font-size: 0.58rem; background: var(--navy); color: white; padding: 0.1rem 0.4rem; border-radius: 10px; margin-top: 0.25rem; display: inline-block; letter-spacing: 0.03em; }
+    .pause-status-active { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .pause-status-paused { background: var(--danger-light); border-radius: 6px; padding: 1rem; }
+    .pause-status-label { font-weight: 500; font-size: 0.9rem; }
+    .pause-status-label.active { color: var(--success); }
+    .pause-status-label.paused { color: var(--danger); }
+    .pause-status-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+    .pause-status-sub.paused { color: var(--danger); opacity: 0.8; }
+    .btn-pause { background: var(--danger-light); color: var(--danger); border: 1px solid var(--danger); border-radius: 4px; padding: 0.5rem 1.2rem; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-pause:hover { background: var(--danger); color: white; }
+    .btn-resume { background: var(--success-light); color: var(--success); border: 1px solid var(--success); border-radius: 4px; padding: 0.5rem 1.2rem; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-top: 0.75rem; display: inline-block; }
+    .btn-resume:hover { background: var(--success); color: white; }
+    .away-message-input { margin-top: 0.75rem; }
+    .save-bar { display: flex; align-items: center; gap: 1rem; padding: 1.5rem; border-top: 1px solid var(--line); background: var(--off-white); }
+    .btn-save { background: var(--navy); color: white; border: none; border-radius: 4px; padding: 0.85rem 2rem; font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+    .btn-save:hover { background: var(--accent); }
+    .btn-save:disabled { background: var(--muted); cursor: not-allowed; }
+    .save-status { font-size: 0.85rem; color: var(--success); display: none; }
+    .loading { display: flex; align-items: center; justify-content: center; padding: 4rem; color: var(--muted); font-size: 0.85rem; gap: 0.5rem; }
+    .spinner { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .not-logged-in { text-align: center; padding: 4rem 2rem; }
+    .not-logged-in p { color: var(--muted); margin-bottom: 1rem; }
+    .not-logged-in a { color: var(--accent); }
+    @media (max-width: 600px) {
+      .tone-grid { grid-template-columns: 1fr; }
+      .timing-presets { grid-template-columns: 1fr 1fr; }
+      .page { padding: 2rem 1rem; }
+      .account-box { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="dashboard.html" class="nav-logo">Reply<span>ful</span></a>
+  <div class="nav-right">
+    <a href="dashboard.html" class="nav-link">← Dashboard</a>
+    <button class="nav-logout" onclick="logout()">Sign out</button>
+  </div>
+</nav>
+<div class="page" id="pageContent">
+  <div class="loading"><div class="spinner"></div> Loading your settings…</div>
+</div>
+<script>
+  const API = 'https://replyful-backend-production.up.railway.app';
+  let sessionToken = null;
+  let currentCustomer = null;
+  let selectedTone = 'professional';
+
+  const TIMING_PRESETS = [
+    { id: 'instant', label: 'Instant',   range: 'Under 5s',     min: 0,     max: 5,     proOnly: true },
+    { id: 'fast',    label: '1–3 min',   range: '1 to 3 min',   min: 60,    max: 180,   proOnly: true },
+    { id: 'natural', label: 'Natural',   range: '2 to 8 min',   min: 120,   max: 480,   proOnly: false },
+    { id: 'relaxed', label: 'Relaxed',   range: '5 to 20 min',  min: 300,   max: 1200,  proOnly: false },
+    { id: 'casual',  label: 'Casual',    range: '10 to 30 min', min: 600,   max: 1800,  proOnly: false },
+    { id: 'hourly',  label: '20–60 min', range: '20 to 60 min', min: 1200,  max: 3600,  proOnly: false },
+    { id: 'hours2',  label: '1–3 hrs',   range: '1 to 3 hours', min: 3600,  max: 10800, proOnly: false },
+    { id: 'hours8',  label: '3–8 hrs',   range: '3 to 8 hours', min: 10800, max: 28800, proOnly: false },
+  ];
+
+  function getPresetId(min, max) {
+    const match = TIMING_PRESETS.find(p => p.min === min && p.max === max);
+    return match ? match.id : 'natural';
+  }
+
+  window.onload = function() {
+    const token = localStorage.getItem('replyful_token');
+    if (!token) { showNotLoggedIn(); return; }
+    sessionToken = token;
+    loadSettings(token);
+  };
+
+  function logout() { localStorage.removeItem('replyful_token'); window.location.href = 'dashboard.html'; }
+
+  function showNotLoggedIn() {
+    document.getElementById('pageContent').innerHTML = `<div class="not-logged-in"><p>You need to be signed in to view your settings.</p><a href="dashboard.html">← Go to sign in</a></div>`;
+  }
+
+  async function loadSettings(token) {
+    try {
+      const res = await fetch(`${API}/dashboard/settings`, { headers: { 'x-session-token': token } });
+      if (res.status === 401) { showNotLoggedIn(); return; }
+      const data = await res.json();
+      currentCustomer = data.customer;
+      selectedTone = currentCustomer.replyTone || 'professional';
+      renderSettings(currentCustomer);
+    } catch (err) { console.error(err); }
+  }
+
+  function selectTone(tone) {
+    selectedTone = tone;
+    document.querySelectorAll('.tone-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('tone_' + tone).classList.add('selected');
+  }
+
+  async function reconnectEmail() {
+    const btn = document.getElementById('reconnectBtn');
+    const msg = document.getElementById('reconnectMsg');
+    btn.disabled = true; btn.textContent = '↺ Connecting…'; msg.style.display = 'none';
+    try {
+      const res = await fetch(`${API}/dashboard/gmail-auth-url`, { headers: { 'x-session-token': sessionToken } });
+      const data = await res.json();
+      if (data.url) { window.location.href = data.url; }
+      else { btn.disabled = false; btn.textContent = '↺ Reconnect'; msg.textContent = 'Something went wrong.'; msg.style.color = 'var(--danger)'; msg.style.display = 'inline'; }
+    } catch (err) { btn.disabled = false; btn.textContent = '↺ Reconnect'; msg.textContent = 'Connection error.'; msg.style.color = 'var(--danger)'; msg.style.display = 'inline'; }
+  }
+
+  function connectCalendar() { window.location.href = `${API}/auth/calendar/${currentCustomer.id}`; }
+  function connectOutlook() { window.location.href = `${API}/auth/outlook/${currentCustomer.id}`; }
+  function connectGmail() { window.location.href = `${API}/auth/${currentCustomer.id}`; }
+
+  let timingSaveTimer = null;
+  function selectTimingPreset(presetId) {
+    const isPro = currentCustomer.plan === 'pro';
+    const preset = TIMING_PRESETS.find(p => p.id === presetId);
+    if (!preset || (preset.proOnly && !isPro)) return;
+    document.querySelectorAll('.timing-preset').forEach(el => el.classList.remove('selected'));
+    const el = document.getElementById('preset_' + presetId);
+    if (el) el.classList.add('selected');
+    const desc = document.getElementById('timingDesc');
+    if (desc) desc.textContent = `Replyful will reply between ${preset.range} after receiving an email.`;
+    clearTimeout(timingSaveTimer);
+    timingSaveTimer = setTimeout(async () => {
+      try {
+        await fetch(`${API}/dashboard/timing-settings`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken }, body: JSON.stringify({ replyDelayMin: preset.min, replyDelayMax: preset.max }) });
+      } catch (err) { console.error('Timing save error:', err); }
+    }, 400);
+  }
+
+  async function pauseAutomation() {
+    const awayMessage = document.getElementById('s_awayMessage')?.value?.trim() || '';
+    try {
+      const res = await fetch(`${API}/dashboard/pause`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken }, body: JSON.stringify({ awayMessage }) });
+      if (res.ok) { currentCustomer.paused = true; currentCustomer.awayMessage = awayMessage; renderSettings(currentCustomer); }
+    } catch (err) { alert('Something went wrong. Please try again.'); }
+  }
+
+  async function resumeAutomation() {
+    try {
+      const res = await fetch(`${API}/dashboard/resume`, { method: 'POST', headers: { 'x-session-token': sessionToken } });
+      if (res.ok) { currentCustomer.paused = false; currentCustomer.awayMessage = ''; renderSettings(currentCustomer); }
+    } catch (err) { alert('Something went wrong. Please try again.'); }
+  }
+
+  function renderPauseSection(c) {
+    if (c.paused) return `<div class="pause-status-paused"><div class="pause-status-label paused">⏸ Automation is currently paused</div><div class="pause-status-sub paused">${c.awayMessage ? `Away message: "${c.awayMessage}"` : 'No away message set — emails are being silently skipped.'}</div><button class="btn-resume" onclick="resumeAutomation()">▶ Resume automation</button></div>`;
+    return `<div class="pause-status-active"><div><div class="pause-status-label active">▶ Automation is active</div><div class="pause-status-sub">Replyful is currently replying to emails automatically.</div></div><button class="btn-pause" onclick="pauseAutomation()">⏸ Pause automation</button></div><div class="away-message-input"><label class="form-label" style="margin-top:1rem;">Away message <span style="font-weight:300;color:var(--muted)">(optional — set before pausing)</span></label><span class="form-hint">If set, this will be sent to anyone who emails you while paused.</span><textarea class="form-textarea" id="s_awayMessage" style="min-height:70px;" placeholder="e.g. Thank you for your email. I'm currently away until 5th May and will be in touch when I return.">${escHtml(c.awayMessage || '')}</textarea></div>`;
+  }
+
+  function renderTimingSection(c) {
+    const isPro = c.plan === 'pro';
+    const currentMin = c.replyDelayMin !== undefined ? c.replyDelayMin : 120;
+    const currentMax = c.replyDelayMax !== undefined ? c.replyDelayMax : 480;
+    const currentId = getPresetId(currentMin, currentMax);
+    const currentPreset = TIMING_PRESETS.find(p => p.id === currentId) || TIMING_PRESETS[2];
+    const cards = TIMING_PRESETS.map(p => {
+      const locked = p.proOnly && !isPro;
+      return `<div class="timing-preset${p.id === currentId ? ' selected' : ''}${locked ? ' pro-only' : ''}" id="preset_${p.id}" onclick="${locked ? '' : `selectTimingPreset('${p.id}')`}">
+        <div class="timing-preset-name">${p.label}</div>
+        <div class="timing-preset-range">${p.range}</div>
+        ${locked ? '<div class="timing-pro-badge">Pro only</div>' : ''}
+      </div>`;
+    }).join('');
+    return `
+      <div style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem;">Choose how quickly Replyful responds. A slight delay feels more natural and customers are less likely to realise replies are automated.</div>
+      <div class="timing-presets">${cards}</div>
+      <div style="font-size:0.78rem;color:var(--accent);font-weight:500;" id="timingDesc">Replyful will reply between ${currentPreset.range} after receiving an email.</div>
+      ${!isPro ? '<div style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem;">Instant and 1–3 min are available on the Pro plan.</div>' : ''}`;
+  }
+
+  function renderSettings(c) {
+    document.getElementById('pageContent').innerHTML = `
+      <div class="page-header">
+        <div class="page-tag">Account settings</div>
+        <h1 class="page-title">Your <em>Replyful</em> settings</h1>
+        <p class="page-sub">Update your business details, reply style, and preferences. Changes take effect immediately.</p>
+      </div>
+
+      <div class="account-box">
+        <div class="account-icon">🏢</div>
+        <div class="account-details">
+          <div class="account-name">${c.businessName}</div>
+          <div class="account-email">${c.email}</div>
+          <div style="font-size:0.82rem;color:var(--muted);margin-top:0.3rem;">Monitoring inbox: <strong style="color:var(--navy);">${c.email}</strong></div>
+          <div style="margin-top:0.3rem;font-size:0.82rem;color:var(--muted);">Provider: <strong style="color:var(--navy);">${c.mailProvider === 'outlook' ? 'Outlook / Microsoft 365' : 'Gmail / Google Workspace'}</strong></div>
+          <div class="account-plan">${c.plan === 'pro' ? 'Pro plan' : 'Starter plan'}</div>
+          <div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+            <button class="reconnect-btn" id="reconnectBtn" onclick="reconnectEmail()">↺ Reconnect ${c.mailProvider === 'outlook' ? 'Outlook' : 'Gmail / Google Workspace'}</button>
+            ${c.mailProvider !== 'outlook' ? `<button class="reconnect-btn" onclick="connectOutlook()" style="color:var(--accent);border-color:var(--accent);">Switch to Outlook</button>` : `<button class="reconnect-btn" onclick="connectGmail()">Switch to Gmail</button>`}
+            <span id="reconnectMsg" style="font-size:0.78rem;display:none;"></span>
+          </div>
+          <p style="font-size:0.72rem;color:var(--muted);margin-top:0.4rem;">Use reconnect if your inbox connection has expired or stopped working.</p>
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line);">
+            <div style="font-size:0.82rem;font-weight:500;color:var(--navy);margin-bottom:0.3rem;">
+              Google Calendar
+              ${c.calendarConnected ? '<span style="background:var(--success-light);color:var(--success);font-size:0.7rem;font-weight:500;padding:0.15rem 0.6rem;border-radius:20px;margin-left:0.5rem;">Connected</span>' : '<span style="background:var(--navy-light);color:var(--muted);font-size:0.7rem;font-weight:500;padding:0.15rem 0.6rem;border-radius:20px;margin-left:0.5rem;">Not connected</span>'}
+            </div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.6rem;">${c.calendarConnected ? 'Replyful is checking your calendar and suggesting real free slots for booking requests.' : 'Connect Google Calendar so Replyful can suggest specific available times for booking requests.'}</div>
+            <button class="reconnect-btn" onclick="connectCalendar()" style="${c.calendarConnected ? '' : 'color:var(--accent);border-color:var(--accent);'}">${c.calendarConnected ? '↺ Reconnect Calendar' : '📅 Connect Google Calendar'}</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="section-header"><div><div class="section-title">Automation control</div><div class="section-sub">Pause or resume Replyful</div></div></div>
+        <div class="section-body">${renderPauseSection(c)}</div>
+      </div>
+
+      <div class="settings-section">
+        <div class="section-header"><div><div class="section-title">Response timing</div><div class="section-sub">Control how quickly Replyful replies</div></div></div>
+        <div class="section-body">${renderTimingSection(c)}</div>
+      </div>
+
+      <div class="settings-section">
+        <div class="section-header"><div><div class="section-title">Follow-up sequences</div><div class="section-sub">Auto-chase unanswered quote &amp; booking requests</div></div></div>
+        <div class="section-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.2rem;">
+            <div>
+              <div style="font-size:0.88rem;font-weight:500;color:var(--navy);">${c.followupEnabled ? '▶ Follow-ups are active' : '⏸ Follow-ups are off'}</div>
+              <div style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">Replyful will send one follow-up to unanswered quote and booking requests if no reply is received.</div>
+            </div>
+            <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;">
+              <div style="position:relative;width:42px;height:24px;" onclick="toggleFollowUps()">
+                <div id="fuTrack" style="position:absolute;inset:0;border-radius:12px;background:${c.followupEnabled ? 'var(--success)' : 'var(--line)'};transition:background 0.2s;"></div>
+                <div id="fuThumb" style="position:absolute;top:3px;left:${c.followupEnabled ? '21px' : '3px'};width:18px;height:18px;border-radius:50%;background:white;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+              </div>
+              <span style="font-size:0.82rem;color:var(--muted);" id="fuLabel">${c.followupEnabled ? 'On' : 'Off'}</span>
+            </label>
+          </div>
+          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;" id="fuDelayRow" ${c.followupEnabled ? '' : 'style="display:none"'}>
+            <label style="font-size:0.82rem;color:var(--navy);font-weight:500;white-space:nowrap;">Send after</label>
+            <input type="range" id="fuDelaySlider" min="1" max="7" value="${c.followupDelayDays || 2}" style="flex:1;max-width:220px;accent-color:var(--accent);" oninput="document.getElementById('fuDelayVal').textContent=this.value+' day'+(this.value==1?'':'s');saveFollowUpDelay(this.value)"/>
+            <span id="fuDelayVal" style="font-size:0.82rem;color:var(--accent);font-weight:500;min-width:50px;">${c.followupDelayDays || 2} days</span>
+            <span style="font-size:0.78rem;color:var(--muted);">of no reply</span>
+          </div>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:1rem;">Only quote requests and booking requests get a follow-up. Each email gets one chase maximum.</p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="section-header"><div><div class="section-title">Quote approval</div><div class="section-sub">Review AI-drafted quotes before they send</div></div></div>
+        <div class="section-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:0.75rem;">
+            <div>
+              <div style="font-size:0.88rem;font-weight:500;color:var(--navy);">${c.quoteApprovalEnabled ? '▶ Quote approval is on' : '⏸ Quote approval is off'}</div>
+              <div style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">${c.quoteApprovalEnabled ? 'When a quote request arrives, Replyful sends the customer a holding reply straight away, then drafts a full quote for you to review here. You approve it, it sends. You dismiss it, nothing goes.' : 'Turn this on and Replyful will draft a full quote for every quote request, based on your pricing info. You review it in the dashboard before it goes to the customer — nothing sends without your say-so.'}</div>
+              ${!c.pricing ? '<div style="font-size:0.75rem;color:var(--warning);margin-top:0.3rem;">⚠ No pricing info set — add pricing below for quotes to be generated</div>' : ''}
+            </div>
+            <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;">
+              <div style="position:relative;width:42px;height:24px;" onclick="toggleQuoteApproval()">
+                <div id="qaTrack" style="position:absolute;inset:0;border-radius:12px;background:${c.quoteApprovalEnabled ? 'var(--success)' : 'var(--line)'};transition:background 0.2s;"></div>
+                <div id="qaThumb" style="position:absolute;top:3px;left:${c.quoteApprovalEnabled ? '21px' : '3px'};width:18px;height:18px;border-radius:50%;background:white;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+              </div>
+              <span style="font-size:0.82rem;color:var(--muted);" id="qaLabel">${c.quoteApprovalEnabled ? 'On' : 'Off'}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="section-header"><div><div class="section-title">Business information</div><div class="section-sub">Used to generate accurate replies</div></div></div>
+        <div class="section-body">
+          <div class="form-group"><label class="form-label">Business description</label><span class="form-hint">A brief description of what your business does.</span><input class="form-input" id="f_businessDescription" value="${escHtml(c.businessDescription || '')}" placeholder="e.g. Plumbing and heating specialist covering Birmingham"/></div>
+          <div class="form-group"><label class="form-label">Working hours</label><input class="form-input" id="f_workingHours" value="${escHtml(c.workingHours || '')}" placeholder="e.g. Monday to Friday, 8am to 6pm"/></div>
+          <div class="form-group"><label class="form-label">Services</label><span class="form-hint">List each service on a new line.</span><textarea class="form-textarea" id="f_services" style="min-height:120px;">${escHtml(c.services || '')}</textarea></div>
+          <div class="form-group"><label class="form-label">Pricing</label><span class="form-hint">Share as much or as little as you're comfortable with.</span><textarea class="form-textarea" id="f_pricing">${escHtml(c.pricing || '')}</textarea></div>
+          <div class="form-group"><label class="form-label">Common questions & answers</label><span class="form-hint">Format: Q: question / A: answer</span><textarea class="form-textarea" id="f_faqs" style="min-height:120px;">${escHtml(c.faqs || '')}</textarea></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="section-header"><div><div class="section-title">Reply style</div><div class="section-sub">How Replyful sounds when it responds</div></div></div>
+        <div class="section-body">
+          <div class="form-group">
+            <label class="form-label">Tone</label>
+            <div class="tone-grid">
+              <div class="tone-card ${selectedTone === 'friendly' ? 'selected' : ''}" id="tone_friendly" onclick="selectTone('friendly')"><div class="tone-name">😊 Friendly</div><div class="tone-desc">Warm and approachable. Like a helpful neighbour who's also an expert.</div></div>
+              <div class="tone-card ${selectedTone === 'professional' ? 'selected' : ''}" id="tone_professional" onclick="selectTone('professional')"><div class="tone-name">👔 Professional</div><div class="tone-desc">Confident and clear. Polite without being stiff.</div></div>
+              <div class="tone-card ${selectedTone === 'formal' ? 'selected' : ''}" id="tone_formal" onclick="selectTone('formal')"><div class="tone-name">🎩 Formal</div><div class="tone-desc">Precise and businesslike. Best for legal or clinical services.</div></div>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Sign-off name</label><span class="form-hint">How Replyful signs off your emails.</span><input class="form-input" id="f_signOffName" value="${escHtml(c.signOffName || c.businessName || '')}" placeholder="e.g. James Wilson Plumbing"/></div>
+          <div class="form-group"><label class="form-label">Never mention</label><span class="form-hint">Anything Replyful should never bring up in replies.</span><textarea class="form-textarea" id="f_neverMention" style="min-height:70px;">${escHtml(c.neverMention || '')}</textarea></div>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn-save" id="saveBtn" onclick="saveSettings()">Save changes</button>
+        <span class="save-status" id="saveStatus">✅ Changes saved successfully</span>
+      </div>
+    `;
+  }
+
+  async function saveSettings() {
+    const btn = document.getElementById('saveBtn');
+    const status = document.getElementById('saveStatus');
+    btn.disabled = true; btn.textContent = 'Saving...'; status.style.display = 'none';
+    const payload = {
+      businessDescription: document.getElementById('f_businessDescription').value.trim(),
+      workingHours: document.getElementById('f_workingHours').value.trim(),
+      services: document.getElementById('f_services').value.trim(),
+      pricing: document.getElementById('f_pricing').value.trim(),
+      faqs: document.getElementById('f_faqs').value.trim(),
+      replyTone: selectedTone,
+      signOffName: document.getElementById('f_signOffName').value.trim(),
+      neverMention: document.getElementById('f_neverMention').value.trim(),
+    };
+    try {
+      const res = await fetch(`${API}/dashboard/settings`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken }, body: JSON.stringify(payload) });
+      if (res.ok) { btn.disabled = false; btn.textContent = 'Save changes'; status.style.display = 'inline'; setTimeout(() => status.style.display = 'none', 3000); }
+      else { const data = await res.json(); btn.disabled = false; btn.textContent = 'Save changes'; alert('Error saving: ' + (data.error || 'Unknown error')); }
+    } catch (err) { btn.disabled = false; btn.textContent = 'Save changes'; alert('Connection error. Please try again.'); }
+  }
+
+  async function toggleQuoteApproval() {
+    const track = document.getElementById('qaTrack'); const thumb = document.getElementById('qaThumb'); const label = document.getElementById('qaLabel');
+    if (!track) return;
+    const newEnabled = thumb.style.left !== '21px';
+    track.style.background = newEnabled ? 'var(--success)' : 'var(--line)'; thumb.style.left = newEnabled ? '21px' : '3px'; label.textContent = newEnabled ? 'On' : 'Off';
+    try { await fetch(`${API}/dashboard/quote-settings`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken }, body: JSON.stringify({ quoteApprovalEnabled: newEnabled }) }); } catch (err) {}
+  }
+
+  function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  let fuSaveTimer = null;
+  async function toggleFollowUps() {
+    const track = document.getElementById('fuTrack'); const thumb = document.getElementById('fuThumb'); const label = document.getElementById('fuLabel'); const delayRow = document.getElementById('fuDelayRow');
+    if (!track) return;
+    const newEnabled = thumb.style.left !== '21px';
+    track.style.background = newEnabled ? 'var(--success)' : 'var(--line)'; thumb.style.left = newEnabled ? '21px' : '3px'; label.textContent = newEnabled ? 'On' : 'Off'; delayRow.style.display = newEnabled ? 'flex' : 'none';
+    try { await fetch(`${API}/dashboard/followup-settings`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken }, body: JSON.stringify({ followupEnabled: newEnabled }) }); } catch (err) {}
+  }
+
+  function saveFollowUpDelay(days) {
+    clearTimeout(fuSaveTimer);
+    fuSaveTimer = setTimeout(async () => {
+      try { await fetch(`${API}/dashboard/followup-settings`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken }, body: JSON.stringify({ followupDelayDays: parseInt(days) }) }); } catch (err) {}
+    }, 600);
+  }
+</script>
+</body>
+</html>
