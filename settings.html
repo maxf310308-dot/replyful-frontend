@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Settings — Replyful</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -15,19 +15,19 @@
       --warning: #d97706; --warning-light: #fef3c7;
       --navy-light: #e8edf5;
     }
-    body { font-family: 'Outfit', sans-serif; font-weight: 300; background: var(--off-white); color: var(--navy); min-height: 100vh; }
+    body { font-family: 'DM Sans', sans-serif; font-weight: 300; background: var(--off-white); color: var(--navy); min-height: 100vh; }
     nav { background: var(--navy); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: white; text-decoration: none; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: white; text-decoration: none; }
     .nav-logo span { color: #7eb8f0; }
     .nav-right { display: flex; align-items: center; gap: 1rem; }
     .nav-link { font-size: 0.83rem; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
     .nav-link:hover { color: white; }
-    .nav-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.4rem 0.9rem; border-radius: 3px; font-family: 'Outfit', sans-serif; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
+    .nav-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.4rem 0.9rem; border-radius: 3px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
     .nav-logout:hover { background: rgba(255,255,255,0.2); }
     .page { max-width: 720px; margin: 0 auto; padding: 3rem 2rem; }
     .page-header { margin-bottom: 2.5rem; }
     .page-tag { display: inline-block; background: #dbeafe; color: var(--accent); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.8rem; border-radius: 20px; margin-bottom: 0.8rem; }
-    .page-title { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 0.4rem; }
+    .page-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 0.4rem; }
     .page-title em { font-style: italic; color: var(--accent); }
     .page-sub { font-size: 0.9rem; color: var(--muted); }
     .account-box { background: white; border: 1px solid var(--line); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: flex-start; gap: 1.5rem; }
@@ -36,19 +36,22 @@
     .account-name { font-weight: 600; font-size: 1rem; color: var(--navy); }
     .account-email { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
     .account-plan { display: inline-block; background: var(--navy); color: white; font-size: 0.72rem; font-weight: 500; padding: 0.2rem 0.7rem; border-radius: 20px; margin-top: 0.4rem; }
-    .reconnect-btn { background: none; border: 1px solid var(--line); border-radius: 4px; padding: 0.4rem 0.9rem; font-family: 'Outfit', sans-serif; font-size: 0.78rem; color: var(--muted); cursor: pointer; transition: border-color 0.2s, color 0.2s; margin-top: 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .reconnect-btn { background: none; border: 1px solid var(--line); border-radius: 4px; padding: 0.4rem 0.9rem; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; color: var(--muted); cursor: pointer; transition: border-color 0.2s, color 0.2s; margin-top: 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; }
     .reconnect-btn:hover { border-color: var(--accent); color: var(--accent); }
     .reconnect-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .settings-section { background: white; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; }
     .section-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
-    .section-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--navy); }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--navy); }
+    .section-icon { width: 28px; height: 28px; background: var(--navy-light); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .section-icon svg { width: 14px; height: 14px; }
+    .section-title-group { display: flex; align-items: center; gap: 0.6rem; }
     .section-sub { font-size: 0.75rem; color: var(--muted); }
     .section-body { padding: 1.5rem; }
     .form-group { margin-bottom: 1.4rem; }
     .form-group:last-child { margin-bottom: 0; }
     .form-label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--navy); margin-bottom: 0.4rem; }
     .form-hint { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; display: block; }
-    .form-input, .form-textarea { width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--line); border-radius: 4px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; color: var(--navy); background: white; outline: none; transition: border-color 0.2s; }
+    .form-input, .form-textarea { width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--line); border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--navy); background: white; outline: none; transition: border-color 0.2s; }
     .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
     .form-textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
     .tone-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem; }
@@ -72,13 +75,13 @@
     .pause-status-label.paused { color: var(--danger); }
     .pause-status-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
     .pause-status-sub.paused { color: var(--danger); opacity: 0.8; }
-    .btn-pause { background: var(--danger-light); color: var(--danger); border: 1px solid var(--danger); border-radius: 4px; padding: 0.5rem 1.2rem; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-pause { background: var(--danger-light); color: var(--danger); border: 1px solid var(--danger); border-radius: 4px; padding: 0.5rem 1.2rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
     .btn-pause:hover { background: var(--danger); color: white; }
-    .btn-resume { background: var(--success-light); color: var(--success); border: 1px solid var(--success); border-radius: 4px; padding: 0.5rem 1.2rem; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-top: 0.75rem; display: inline-block; }
+    .btn-resume { background: var(--success-light); color: var(--success); border: 1px solid var(--success); border-radius: 4px; padding: 0.5rem 1.2rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-top: 0.75rem; display: inline-block; }
     .btn-resume:hover { background: var(--success); color: white; }
     .away-message-input { margin-top: 0.75rem; }
     .save-bar { display: flex; align-items: center; gap: 1rem; padding: 1.5rem; border-top: 1px solid var(--line); background: var(--off-white); }
-    .btn-save { background: var(--navy); color: white; border: none; border-radius: 4px; padding: 0.85rem 2rem; font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+    .btn-save { background: var(--navy); color: white; border: none; border-radius: 4px; padding: 0.85rem 2rem; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
     .btn-save:hover { background: var(--accent); }
     .btn-save:disabled { background: var(--muted); cursor: not-allowed; }
     .save-status { font-size: 0.85rem; color: var(--success); display: none; }
@@ -268,17 +271,17 @@
       </div>
 
       <div class="settings-section">
-        <div class="section-header"><div><div class="section-title">Automation control</div><div class="section-sub">Pause or resume Replyful</div></div></div>
+        <div class="section-header"><div class="section-title-group"><div class="section-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#0c1c38" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="2" width="2.5" height="10" rx="1"/><rect x="8.5" y="2" width="2.5" height="10" rx="1"/></svg></div><div><div class="section-title">Automation control</div><div class="section-sub">Pause or resume Replyful</div></div></div></div>
         <div class="section-body">${renderPauseSection(c)}</div>
       </div>
 
       <div class="settings-section">
-        <div class="section-header"><div><div class="section-title">Response timing</div><div class="section-sub">Control how quickly Replyful replies</div></div></div>
+        <div class="section-header"><div class="section-title-group"><div class="section-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#0c1c38" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3l2 2"/></svg></div><div><div class="section-title">Response timing</div><div class="section-sub">Control how quickly Replyful replies</div></div></div></div>
         <div class="section-body">${renderTimingSection(c)}</div>
       </div>
 
       <div class="settings-section">
-        <div class="section-header"><div><div class="section-title">Follow-up sequences</div><div class="section-sub">Auto-chase unanswered quote &amp; booking requests</div></div></div>
+        <div class="section-header"><div class="section-title-group"><div class="section-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#0c1c38" stroke-width="1.5" stroke-linecap="round"><path d="M11 3l-4 4-4-4"/><path d="M11 8l-4 4-4-4"/></svg></div><div><div class="section-title">Follow-up sequences</div><div class="section-sub">Auto-chase unanswered quote &amp; booking requests</div></div></div></div>
         <div class="section-body">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.2rem;">
             <div>
@@ -304,7 +307,7 @@
       </div>
 
       <div class="settings-section">
-        <div class="section-header"><div><div class="section-title">Quote approval</div><div class="section-sub">Review AI-drafted quotes before they send</div></div></div>
+        <div class="section-header"><div class="section-title-group"><div class="section-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#0c1c38" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="1" width="10" height="12" rx="1.5"/><path d="M4 5h6M4 7.5h6M4 10h4"/></svg></div><div><div class="section-title">Quote approval</div><div class="section-sub">Review AI-drafted quotes before they send</div></div></div></div>
         <div class="section-body">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:0.75rem;">
             <div>
@@ -324,7 +327,7 @@
       </div>
 
       <div class="settings-section">
-        <div class="section-header"><div><div class="section-title">Business information</div><div class="section-sub">Used to generate accurate replies</div></div></div>
+        <div class="section-header"><div class="section-title-group"><div class="section-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#0c1c38" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="4" width="10" height="9" rx="1.5"/><path d="M5 4V3a2 2 0 0 1 4 0v1"/><path d="M7 8v2"/></svg></div><div><div class="section-title">Business information</div><div class="section-sub">Used to generate accurate replies</div></div></div></div>
         <div class="section-body">
           <div class="form-group"><label class="form-label">Business description</label><span class="form-hint">A brief description of what your business does.</span><input class="form-input" id="f_businessDescription" value="${escHtml(c.businessDescription || '')}" placeholder="e.g. Plumbing and heating specialist covering Birmingham"/></div>
           <div class="form-group"><label class="form-label">Working hours</label><input class="form-input" id="f_workingHours" value="${escHtml(c.workingHours || '')}" placeholder="e.g. Monday to Friday, 8am to 6pm"/></div>
@@ -335,7 +338,7 @@
       </div>
 
       <div class="settings-section">
-        <div class="section-header"><div><div class="section-title">Reply style</div><div class="section-sub">How Replyful sounds when it responds</div></div></div>
+        <div class="section-header"><div class="section-title-group"><div class="section-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#0c1c38" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h10M2 7h8M2 10h5"/><circle cx="11.5" cy="10" r="2"/><path d="M11.5 11.5v1.5"/></svg></div><div><div class="section-title">Reply style</div><div class="section-sub">How Replyful sounds when it responds</div></div></div></div>
         <div class="section-body">
           <div class="form-group">
             <label class="form-label">Tone</label>
