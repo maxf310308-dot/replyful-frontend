@@ -30,13 +30,28 @@
     .nav-cta { background: var(--accent) !important; color: white !important; padding: 0.45rem 1.2rem; border-radius: 4px; font-weight: 500 !important; transition: background 0.2s !important; }
     .nav-cta:hover { background: var(--accent-2) !important; }
 
-    /* ── MOBILE NAV ──────────────────────────────────────────── */
-    .mob-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; background: var(--navy); border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: env(safe-area-inset-bottom); }
-    .mob-nav-inner { display: flex; height: 58px; }
-    .mob-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: rgba(255,255,255,0.4); font-size: 0.58rem; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; border: none; background: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: color 0.15s; padding: 0; }
-    .mob-nav-item svg { width: 20px; height: 20px; }
-    .mob-nav-item:hover, .mob-nav-item.active { color: rgba(255,255,255,0.9); }
-    .mob-nav-item.cta { color: #7eb8f0; }
+    /* ── HAMBURGER BUTTON ────────────────────────────────────── */
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; color: white; }
+    .hamburger svg { width: 22px; height: 22px; display: block; }
+
+    /* ── MOBILE MENU OVERLAY ─────────────────────────────────── */
+    .mob-menu-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0); pointer-events: none; transition: background 0.3s; }
+    .mob-menu-overlay.open { background: rgba(0,0,0,0.5); pointer-events: all; }
+    .mob-menu { position: absolute; top: 0; right: 0; bottom: 0; width: 75%; max-width: 280px; background: var(--navy); transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.32,0.72,0,1); display: flex; flex-direction: column; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+    .mob-menu-overlay.open .mob-menu { transform: translateX(0); }
+    .mob-menu-header { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .mob-menu-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: white; letter-spacing: -0.02em; }
+    .mob-menu-logo span { color: #7eb8f0; }
+    .mob-menu-close { background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; padding: 0.3rem; }
+    .mob-menu-close svg { width: 20px; height: 20px; display: block; }
+    .mob-menu-links { flex: 1; padding: 1.5rem 0; display: flex; flex-direction: column; }
+    .mob-menu-link { display: flex; align-items: center; gap: 0.85rem; padding: 0.9rem 1.5rem; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.92rem; font-weight: 400; transition: color 0.15s, background 0.15s; border: none; background: none; cursor: pointer; font-family: 'DM Sans', sans-serif; text-align: left; width: 100%; }
+    .mob-menu-link svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.7; }
+    .mob-menu-link:hover { color: white; background: rgba(255,255,255,0.05); }
+    .mob-menu-link:hover svg { opacity: 1; }
+    .mob-menu-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 0.5rem 1.5rem; }
+    .mob-menu-cta { margin: 1rem 1.5rem 0; background: var(--accent); color: white; border: none; border-radius: 6px; padding: 0.9rem; font-family: 'DM Sans', sans-serif; font-size: 0.92rem; font-weight: 500; cursor: pointer; text-decoration: none; display: block; text-align: center; transition: background 0.2s; }
+    .mob-menu-cta:hover { background: var(--accent-2); }
 
     /* ── LOGIN SHEET ─────────────────────────────────────────── */
     .sheet-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0); display: flex; align-items: flex-end; pointer-events: none; transition: background 0.3s; }
@@ -252,8 +267,7 @@
     @media (max-width: 900px) {
       .nav { padding: 0 1.5rem; }
       .nav-links { display: none; }
-      .mob-nav { display: flex; }
-      body { padding-bottom: 56px; }
+      .hamburger { display: block; }
 
       .hero-grid { grid-template-columns: 1fr; padding: 3rem 1.5rem 4rem; gap: 3rem; }
       .hero h1 { font-size: 3rem; }
@@ -301,29 +315,53 @@
     <li><a href="dashboard.html" class="nav-login">Log in</a></li>
     <li><a href="signup.html" class="nav-cta">Get started</a></li>
   </ul>
+  <button class="hamburger" onclick="openMobMenu()" aria-label="Open menu">
+    <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M3 6h16M3 11h16M3 16h16"/>
+    </svg>
+  </button>
 </nav>
 
 <!-- MOBILE NAV -->
-<nav class="mob-nav">
-  <div class="mob-nav-inner">
-    <button class="mob-nav-item" onclick="openSheet()">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="10" cy="6.5" r="3.5"/><path d="M3 17c0-3.866 3.134-7 7-7s7 3.134 7 7"/></svg>
-      Log in
-    </button>
-    <a href="#features" class="mob-nav-item">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5"/></svg>
-      Features
-    </a>
-    <a href="signup.html" class="mob-nav-item cta">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v14M3 10h14"/></svg>
-      Get started
-    </a>
-    <a href="dashboard.html" class="mob-nav-item">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="16" height="16" rx="2"/><path d="M2 8h16M8 8v10"/></svg>
-      Dashboard
-    </a>
+<!-- MOBILE MENU -->
+<div class="mob-menu-overlay" id="mobMenuOverlay" onclick="handleMobOverlay(event)">
+  <div class="mob-menu">
+    <div class="mob-menu-header">
+      <div class="mob-menu-logo">Reply<span>ful</span></div>
+      <button class="mob-menu-close" onclick="closeMobMenu()">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l12 12M16 4L4 16"/></svg>
+      </button>
+    </div>
+    <div class="mob-menu-links">
+      <a href="#features" class="mob-menu-link" onclick="closeMobMenu()">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="6" height="6" rx="1"/><rect x="10" y="2" width="6" height="6" rx="1"/><rect x="2" y="10" width="6" height="6" rx="1"/><rect x="10" y="10" width="6" height="6" rx="1"/></svg>
+        Features
+      </a>
+      <a href="#demo" class="mob-menu-link" onclick="closeMobMenu()">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="4" width="14" height="11" rx="2"/><path d="M2 7.5l7 4.5 7-4.5"/></svg>
+        Live demo
+      </a>
+      <a href="#how" class="mob-menu-link" onclick="closeMobMenu()">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l2.5 2.5"/></svg>
+        How it works
+      </a>
+      <a href="#pricing" class="mob-menu-link" onclick="closeMobMenu()">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M9 2v14M5 5.5h5.5a2.5 2.5 0 0 1 0 5H5v-5zM5 10.5h6a2.5 2.5 0 0 1 0 5H5v-5z"/></svg>
+        Pricing
+      </a>
+      <div class="mob-menu-divider"></div>
+      <button class="mob-menu-link" onclick="closeMobMenu(); openSheet()">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="9" cy="6" r="3.5"/><path d="M2 16c0-3.866 3.134-7 7-7s7 3.134 7 7"/></svg>
+        Log in
+      </button>
+      <a href="dashboard.html" class="mob-menu-link">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="14" height="14" rx="2"/><path d="M2 7h14M7 7v9"/></svg>
+        Dashboard
+      </a>
+    </div>
+    <a href="signup.html" class="mob-menu-cta">Get started — from £47/mo</a>
   </div>
-</nav>
+</div>
 
 <!-- LOGIN SHEET -->
 <div class="sheet-overlay" id="sheetOverlay" onclick="handleOverlay(event)">
@@ -838,6 +876,10 @@
       btn.disabled = false; btn.textContent = 'Generate AI reply →';
     }
   }
+
+  function openMobMenu() { document.getElementById('mobMenuOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeMobMenu() { document.getElementById('mobMenuOverlay').classList.remove('open'); document.body.style.overflow = ''; }
+  function handleMobOverlay(e) { if (e.target === document.getElementById('mobMenuOverlay')) closeMobMenu(); }
 
   function openSheet() { document.getElementById('sheetOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
   function closeSheet() { document.getElementById('sheetOverlay').classList.remove('open'); document.body.style.overflow = ''; }
