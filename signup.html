@@ -269,16 +269,25 @@
   <div class="form-section" id="step4">
     <div class="form-group">
       <label class="form-label">Choose your plan</label>
+
+      <!-- Billing toggle -->
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.2rem;background:white;border:1px solid var(--line);border-radius:6px;padding:0.5rem;width:fit-content;">
+        <button id="billingMonthly" onclick="selectBilling('monthly')" style="background:var(--navy);color:white;border:none;border-radius:4px;padding:0.45rem 1rem;font-family:'Outfit',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.2s;">Monthly</button>
+        <button id="billingAnnual" onclick="selectBilling('annual')" style="background:none;color:var(--muted);border:none;border-radius:4px;padding:0.45rem 1rem;font-family:'Outfit',sans-serif;font-size:0.82rem;font-weight:400;cursor:pointer;transition:all 0.2s;">Annual <span style="background:#16a34a;color:white;font-size:0.68rem;padding:0.1rem 0.4rem;border-radius:10px;margin-left:0.2rem;font-weight:500;">Save ~20%</span></button>
+      </div>
+
       <div class="plan-grid">
         <div class="plan-card selected" id="planStarter" onclick="selectPlan('starter')">
           <div class="plan-name">Starter</div>
-          <div class="plan-price">£47<span>/mo</span></div>
-          <div class="plan-feature">Up to 500 auto-replies per month · 4-second response time · Dashboard access · Weekly reports</div>
+          <div class="plan-price" id="starterPrice">£47<span>/mo</span></div>
+          <div class="plan-feature" id="starterFeature">Up to 500 auto-replies · Natural response timing · Dashboard & weekly reports</div>
+          <div id="starterAnnualNote" style="display:none;margin-top:0.5rem;font-size:0.72rem;color:#16a34a;font-weight:500;">Billed as £468/year · saves £96 vs monthly</div>
         </div>
         <div class="plan-card" id="planPro" onclick="selectPlan('pro')">
           <div class="plan-name">Pro</div>
-          <div class="plan-price">£97<span>/mo</span></div>
-          <div class="plan-feature">Unlimited auto-replies · Instant response · Dashboard access · Weekly reports · Priority support</div>
+          <div class="plan-price" id="proPrice">£97<span>/mo</span></div>
+          <div class="plan-feature" id="proFeature">Unlimited auto-replies · Instant response · Priority support</div>
+          <div id="proAnnualNote" style="display:none;margin-top:0.5rem;font-size:0.72rem;color:#16a34a;font-weight:500;">Billed as £984/year · saves £180 vs monthly</div>
         </div>
       </div>
     </div>
@@ -324,6 +333,28 @@
 <script>
   let selectedPlan = 'starter';
   let selectedTone = 'professional';
+  let selectedBilling = 'monthly';
+
+  function selectBilling(billing) {
+    selectedBilling = billing;
+    const mBtn = document.getElementById('billingMonthly');
+    const aBtn = document.getElementById('billingAnnual');
+    if (billing === 'annual') {
+      mBtn.style.background = 'none'; mBtn.style.color = 'var(--muted)'; mBtn.style.fontWeight = '400';
+      aBtn.style.background = 'var(--navy)'; aBtn.style.color = 'white'; aBtn.style.fontWeight = '500';
+      document.getElementById('starterPrice').innerHTML = '£39<span>/mo</span>';
+      document.getElementById('proPrice').innerHTML = '£82<span>/mo</span>';
+      document.getElementById('starterAnnualNote').style.display = 'block';
+      document.getElementById('proAnnualNote').style.display = 'block';
+    } else {
+      mBtn.style.background = 'var(--navy)'; mBtn.style.color = 'white'; mBtn.style.fontWeight = '500';
+      aBtn.style.background = 'none'; aBtn.style.color = 'var(--muted)'; aBtn.style.fontWeight = '400';
+      document.getElementById('starterPrice').innerHTML = '£47<span>/mo</span>';
+      document.getElementById('proPrice').innerHTML = '£97<span>/mo</span>';
+      document.getElementById('starterAnnualNote').style.display = 'none';
+      document.getElementById('proAnnualNote').style.display = 'none';
+    }
+  }
 
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
@@ -447,7 +478,7 @@
       const checkoutRes = await fetch('https://replyful-backend-production.up.railway.app/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId, plan: selectedPlan, loginEmail })
+        body: JSON.stringify({ customerId, plan: selectedPlan, loginEmail, billing: selectedBilling })
       });
 
       const { url } = await checkoutRes.json();
