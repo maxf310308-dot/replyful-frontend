@@ -153,6 +153,10 @@
       currentCustomer = data.customer;
       selectedTone = currentCustomer.replyTone || 'professional';
       renderSettings(currentCustomer);
+      // Initialize filter controls
+      const catContainer = document.getElementById('categoryCheckboxes');
+      if (catContainer) renderCategoryCheckboxes(currentCustomer.replyCategories, catContainer);
+      renderIgnoredDomainTags(currentCustomer.ignoredDomains || []);
     } catch (err) { console.error(err); }
   }
 
@@ -327,6 +331,29 @@
       </div>
 
       <div class="settings-section">
+        <div class="section-header"><div class="section-title-group"><div class="section-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#0c1c38" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h10l-4 5v3l-2-1V8z"/></svg></div><div><div class="section-title">Email filters</div><div class="section-sub">Control which emails get an automatic reply</div></div></div></div>
+        <div class="section-body">
+          <div style="font-size:0.82rem;font-weight:500;color:var(--navy);margin-bottom:0.4rem;">Reply to these email types</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem;">Untick any category and Replyful will label and read those emails but not reply automatically.</div>
+          <div id="categoryCheckboxes" style="display:flex;flex-direction:column;gap:0.7rem;margin-bottom:1.5rem;"></div>
+          <div style="padding-top:1.2rem;border-top:1px solid var(--line);">
+            <div style="font-size:0.82rem;font-weight:500;color:var(--navy);margin-bottom:0.3rem;">Always blocked automatically</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;">These are filtered automatically and cannot be turned off.</div>
+            <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1.2rem;">${['No-reply senders','Marketing emails','Order confirmations','Delivery notifications','Payment receipts','Newsletter unsubscribes'].map(l => `<span style="background:var(--navy-light);color:var(--muted);font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:20px;">${l}</span>`).join('')}</div>
+          </div>
+          <div style="padding-top:1.2rem;border-top:1px solid var(--line);">
+            <div style="font-size:0.82rem;font-weight:500;color:var(--navy);margin-bottom:0.3rem;">Block additional domains</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;">Add domains you never want Replyful to reply to, e.g. <code style="background:var(--navy-light);padding:0.1rem 0.3rem;border-radius:3px;font-size:0.72rem;">amazon.co.uk</code></div>
+            <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+              <input type="text" id="domainInput" placeholder="e.g. amazon.co.uk" style="flex:1;padding:0.65rem 0.85rem;border:1px solid var(--line);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--navy);background:white;outline:none;" onkeydown="if(event.key==='Enter')addIgnoredDomain()"/>
+              <button onclick="addIgnoredDomain()" style="background:var(--navy);color:white;border:none;border-radius:4px;padding:0.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;white-space:nowrap;">Add</button>
+            </div>
+            <div id="ignoredDomainTags" style="display:flex;flex-wrap:wrap;gap:0.4rem;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
         <div class="section-header"><div class="section-title-group"><div class="section-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#0c1c38" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="4" width="10" height="9" rx="1.5"/><path d="M5 4V3a2 2 0 0 1 4 0v1"/><path d="M7 8v2"/></svg></div><div><div class="section-title">Business information</div><div class="section-sub">Used to generate accurate replies</div></div></div></div>
         <div class="section-body">
           <div class="form-group"><label class="form-label">Business description</label><span class="form-hint">A brief description of what your business does.</span><input class="form-input" id="f_businessDescription" value="${escHtml(c.businessDescription || '')}" placeholder="e.g. Plumbing and heating specialist covering Birmingham"/></div>
@@ -390,6 +417,82 @@
   }
 
   function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  const ALL_CATEGORIES = ['Quote request','Booking request','General enquiry','Complaint','Follow-up','Invoice query'];
+  const CAT_DESCRIPTIONS = {
+    'Quote request': 'Customers asking for a price or estimate',
+    'Booking request': 'Customers asking to book an appointment',
+    'General enquiry': 'General questions about your business',
+    'Complaint': 'Unhappy customers raising issues',
+    'Follow-up': 'Customers chasing a previous enquiry',
+    'Invoice query': 'Questions about invoices or payments'
+  };
+  let currentCategories = [...ALL_CATEGORIES];
+  let currentIgnoredDomains = [];
+  let filterSaveTimer = null;
+
+  function renderCategoryCheckboxes(replyCategories, container) {
+    currentCategories = replyCategories || [...ALL_CATEGORIES];
+    container.innerHTML = ALL_CATEGORIES.map(cat => {
+      const checked = currentCategories.includes(cat);
+      return `<label style="display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;padding:0.6rem 0.75rem;border:1px solid var(--line);border-radius:6px;background:${checked ? '#f0f7ff' : 'white'};transition:background 0.15s;" id="catLabel_${cat.replace(/\s/g,'_')}">
+        <input type="checkbox" ${checked ? 'checked' : ''} style="margin-top:0.15rem;accent-color:var(--accent);width:15px;height:15px;cursor:pointer;flex-shrink:0;" onchange="toggleCategory('${cat}', this.checked)"/>
+        <div>
+          <div style="font-size:0.82rem;font-weight:500;color:var(--navy);">${cat}</div>
+          <div style="font-size:0.72rem;color:var(--muted);">${CAT_DESCRIPTIONS[cat] || ''}</div>
+        </div>
+      </label>`;
+    }).join('');
+  }
+
+  function renderIgnoredDomainTags(domains) {
+    currentIgnoredDomains = domains || [];
+    const container = document.getElementById('ignoredDomainTags');
+    if (!container) return;
+    container.innerHTML = currentIgnoredDomains.map((d, i) =>
+      `<span style="display:inline-flex;align-items:center;gap:0.35rem;background:var(--danger-light);color:var(--danger);font-size:0.75rem;padding:0.25rem 0.6rem;border-radius:20px;">
+        ${escHtml(d)}
+        <button onclick="removeIgnoredDomain(${i})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:0.9rem;padding:0;line-height:1;">×</button>
+      </span>`
+    ).join('');
+  }
+
+  function toggleCategory(cat, checked) {
+    const label = document.getElementById('catLabel_' + cat.replace(/\s/g,'_'));
+    if (label) label.style.background = checked ? '#f0f7ff' : 'white';
+    if (checked) { if (!currentCategories.includes(cat)) currentCategories.push(cat); }
+    else { currentCategories = currentCategories.filter(c => c !== cat); }
+    saveFilters();
+  }
+
+  function addIgnoredDomain() {
+    const input = document.getElementById('domainInput');
+    const val = input.value.trim().toLowerCase().replace(/^@/, '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+    if (!val || currentIgnoredDomains.includes(val)) { input.value = ''; return; }
+    currentIgnoredDomains.push(val);
+    renderIgnoredDomainTags(currentIgnoredDomains);
+    input.value = '';
+    saveFilters();
+  }
+
+  function removeIgnoredDomain(index) {
+    currentIgnoredDomains.splice(index, 1);
+    renderIgnoredDomainTags(currentIgnoredDomains);
+    saveFilters();
+  }
+
+  function saveFilters() {
+    clearTimeout(filterSaveTimer);
+    filterSaveTimer = setTimeout(async () => {
+      try {
+        await fetch(`${API}/dashboard/filter-settings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-session-token': sessionToken },
+          body: JSON.stringify({ replyCategories: currentCategories, ignoredDomains: currentIgnoredDomains })
+        });
+      } catch (err) { console.error('Filter save error:', err); }
+    }, 500);
+  }
 
   let fuSaveTimer = null;
   async function toggleFollowUps() {
