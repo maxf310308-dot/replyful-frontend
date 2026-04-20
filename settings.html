@@ -259,7 +259,7 @@
           <div class="account-plan">${c.plan === 'pro' ? 'Pro plan' : 'Starter plan'}</div>
           <div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
             <button class="reconnect-btn" id="reconnectBtn" onclick="reconnectEmail()">↺ Reconnect ${c.mailProvider === 'outlook' ? 'Outlook' : 'Gmail / Google Workspace'}</button>
-            ${${c.mailProvider !== 'outlook' ? `<button class="reconnect-btn" onclick="connectOutlook()">Switch to Outlook</button>` : `<button class="reconnect-btn" onclick="connectGmail()">Switch to Gmail</button>`}}
+            ${c.mailProvider !== 'outlook' ? `<button class="reconnect-btn" onclick="connectOutlook()">Switch to Outlook</button>` : `<button class="reconnect-btn" onclick="connectGmail()">Switch to Gmail</button>`}
             <span id="reconnectMsg" style="font-size:0.78rem;display:none;"></span>
           </div>
           <p style="font-size:0.72rem;color:var(--muted);margin-top:0.4rem;">Use reconnect if your inbox connection has expired or stopped working.</p>
