@@ -319,8 +319,8 @@
         <div class="section-body">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:0.75rem;">
             <div>
-              <div style="font-size:0.88rem;font-weight:500;color:var(--navy);">${c.quoteApprovalEnabled ? '▶ Quote approval is on' : '⏸ Quote approval is off'}</div>
-              <div style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">${c.quoteApprovalEnabled ? 'When a quote request arrives, Replyful sends the customer a holding reply straight away, then drafts a full quote for you to review here. You approve it, it sends. You dismiss it, nothing goes.' : 'Turn this on and Replyful will draft a full quote for every quote request, based on your pricing info. You review it in the dashboard before it goes to the customer — nothing sends without your say-so.'}</div>
+              <div style="font-size:0.88rem;font-weight:500;color:var(--navy);">${c.quoteApprovalEnabled ? '▶ Quote approval is on' : '▶ Automatic quoting is on'}</div>
+              <div style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">${c.quoteApprovalEnabled ? 'When a quote request arrives, Replyful sends the customer a holding reply straight away, then drafts a full quote for you to review here. You approve it, it sends. You dismiss it, nothing goes.' : 'When a quote request arrives, Replyful generates and sends a quote automatically based on your pricing. Turn this on if you\'d prefer to review quotes before they go out.'}</div>
               ${!c.pricing ? '<div style="font-size:0.75rem;color:var(--warning);margin-top:0.3rem;">⚠ No pricing info set — add pricing below for quotes to be generated</div>' : ''}
             </div>
             <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;">
